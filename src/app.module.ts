@@ -4,8 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AlquileresModule } from './alquileres/alquileres.module';
-import { PagosModule } from './pagos/pagos.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -21,9 +21,7 @@ import { PagosModule } from './pagos/pagos.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }),
-    AlquileresModule,
-    PagosModule,
+    }), AuthModule, UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
