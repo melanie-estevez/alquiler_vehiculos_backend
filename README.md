@@ -1,12 +1,1 @@
-nest generate module vehiculos
-nest generate controller vehiculos
-nest generate service vehiculos
-nest generate module mantenimientos
-nest generate controller mantenimientos
-nest generate service mantenimientos
-nest generate module reservas
-nest generate controller reservas
-nest generate service reservas
-nest generate module inspeccion
-nest generate controller inspeccion
-nest generate service inspeccion
+
