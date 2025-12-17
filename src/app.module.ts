@@ -8,7 +8,6 @@ import { VehiculosModule } from './vehiculos/vehiculos.module';
 
 @Module({
   imports: [
-
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     TypeOrmModule.forRoot({
