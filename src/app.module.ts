@@ -4,7 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { VehiculosModule } from './vehiculos/vehiculos.module';
+import { AlquilerModule } from './alquileres/alquiler.module';
+import { PagosModule } from './pagos/pagos.module';
 
 @Module({
   imports: [
@@ -19,10 +20,8 @@ import { VehiculosModule } from './vehiculos/vehiculos.module';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      //ssl: { rejectUnauthorized: false },
-    }),
-    VehiculosModule,
-    
+      // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
+    }), PagosModule, AlquilerModule
   ],
   controllers: [AppController],
   providers: [AppService],
