@@ -4,9 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { VehiculosModule } from './vehiculos/vehiculos.module';
 
 @Module({
   imports: [
+
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     TypeOrmModule.forRoot({
@@ -18,8 +20,10 @@ import { AppService } from './app.service';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
+      //ssl: { rejectUnauthorized: false },
     }),
+    VehiculosModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],
