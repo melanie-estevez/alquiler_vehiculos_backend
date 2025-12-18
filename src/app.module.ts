@@ -6,6 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { LogsModule } from './logs_acceso/logs.module';
+import { HistorialModule } from './historial_reservas/historial.module';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { UsersModule } from './users/users.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }), AuthModule, UsersModule
+    }), AuthModule, UsersModule, LogsModule, HistorialModule
   ],
   controllers: [AppController],
   providers: [AppService],
