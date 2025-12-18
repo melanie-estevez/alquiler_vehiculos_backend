@@ -6,7 +6,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-
+import { SucursalesModule } from './sucursales/sucursales.module';
+import { VehiculosModule } from './vehiculos/vehiculos.module';
+import { ReservasModule } from './reservas/reservas.module';
+import { MantenimientosModule}from './mantenimientos/mantenimientos.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,7 +24,14 @@ import { UsersModule } from './users/users.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }), AuthModule, UsersModule
+    }), 
+    AuthModule, 
+    UsersModule, 
+    SucursalesModule,
+    VehiculosModule,
+    ReservasModule,
+    MantenimientosModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

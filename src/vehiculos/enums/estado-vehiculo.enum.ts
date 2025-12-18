@@ -1,0 +1,6 @@
+export enum EstadoVehiculo {
+  DISPONIBLE = 'DISPONIBLE',
+  RENTADO = 'RENTADO',
+  MANTENIMIENTO = 'MANTENIMIENTO',
+  BAJA = 'BAJA',
+}
