@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { LogsModule } from './logs_acceso/logs.module';
 import { HistorialModule } from './historial_reservas/historial.module';
+import { AlquilerModule } from './alquileres/alquiler.module';
+import { PagosModule } from './pagos/pagos.module';
 
 @Module({
   imports: [
@@ -20,10 +22,10 @@ import { HistorialModule } from './historial_reservas/historial.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'], 
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }), AuthModule, UsersModule, LogsModule, HistorialModule
+    }), AuthModule, UsersModule, LogsModule, HistorialModule, PagosModule, AlquilerModule
   ],
   controllers: [AppController],
   providers: [AppService],
