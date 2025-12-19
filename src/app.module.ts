@@ -5,6 +5,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { VehiculosModule } from './vehiculos/vehiculos.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+
 
 @Module({
   imports: [
@@ -20,10 +23,11 @@ import { VehiculosModule } from './vehiculos/vehiculos.module';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+
       //ssl: { rejectUnauthorized: false },
     }),
-    VehiculosModule,
-    
+    VehiculosModule,AuthModule, UsersModule
+
   ],
   controllers: [AppController],
   providers: [AppService],
