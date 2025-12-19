@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { SucursalesService } from './sucursales.service';
 import { CreateSucursalesDto } from './dto/create-sucursales.dto';
 import { UpdateSucursalesDto } from './dto/update-sucursales.dto';
 
 @Controller('sucursales')
 export class SucursalesController {
-  constructor(private readonly SucursalesService: SucursalesService) {}
+  constructor(
+    private readonly sucursalesService: SucursalesService,
+  ) {}
 
   @Post()
-  create(@Body() createSucursalesDto: CreateSucursalesDto) {
-    return this.SucursalesService.create(createSucursalesDto);
+  create(@Body() dto: CreateSucursalesDto) {
+    return this.sucursalesService.create(dto);
   }
 
   @Get()
   findAll() {
-    return this.SucursalesService.findAll();
+    return this.sucursalesService.findAll();
   }
 
-  @Get(':id_sucursales')
-  findOne(@Param('id_sucursales') id_sucursales: string) {
-    return this.SucursalesService.findOne(id_sucursales);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.sucursalesService.findOne(id);
   }
 
-  @Put(':id_sucursales')
-  update(@Param('id_sucursales') id_sucursales: string, @Body() UpdatesucursalesDto: UpdateSucursalesDto) {
-    return this.SucursalesService.update(id_sucursales, UpdatesucursalesDto);
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateSucursalesDto,
+  ) {
+    return this.sucursalesService.update(id, dto);
   }
 
-  @Delete(':id_sucursales')
-  remove(@Param('id_sucursales') id_sucursales: string) {
-    return this.SucursalesService.remove(id_sucursales);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.sucursalesService.remove(id);
   }
 }

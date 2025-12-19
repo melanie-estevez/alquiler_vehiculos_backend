@@ -17,8 +17,4 @@ export class UpdateSucursalesDto {
   @IsString()
   telefono?: string;
 
-  @IsOptional()
-  @IsArray()
-  @IsUUID('all', { each: true })
-  id_vehiculo?: string[];
 }

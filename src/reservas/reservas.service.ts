@@ -16,7 +16,6 @@ export class ReservaService {
     private readonly vehiculoRepository: Repository<Vehiculo>,
   ) {}
 
-
   async create(dto: CreateReservaDto): Promise<Reservas> {
     const { id_vehiculo, ...data } = dto;
 
@@ -30,7 +29,7 @@ export class ReservaService {
 
     const reserva = this.reservasRepository.create({
       ...data,
-      id_vehiculo: { id_vehiculo },
+      vehiculo,
     });
 
     return this.reservasRepository.save(reserva);
@@ -38,15 +37,14 @@ export class ReservaService {
 
   async findAll(): Promise<Reservas[]> {
     return this.reservasRepository.find({
-      relations: ['id_vehiculo'],
+      relations: ['vehiculo'],
     });
   }
-
 
   async findOne(id: string): Promise<Reservas> {
     const reserva = await this.reservasRepository.findOne({
       where: { id_reserva: id },
-      relations: ['id_vehiculo'],
+      relations: ['vehiculo'],
     });
 
     if (!reserva) {
@@ -58,28 +56,27 @@ export class ReservaService {
 
   async update(id: string, dto: UpdateReservaDto): Promise<Reservas> {
     const reserva = await this.findOne(id);
+    const { id_vehiculo, ...data } = dto;
 
-    if (dto.id_vehiculo) {
+    Object.assign(reserva, data);
+
+    if (id_vehiculo !== undefined) {
       const vehiculo = await this.vehiculoRepository.findOne({
-        where: { id_vehiculo: dto.id_vehiculo },
+        where: { id_vehiculo },
       });
 
       if (!vehiculo) {
-        throw new NotFoundException(
-          `Vehículo ${dto.id_vehiculo} no existe`,
-        );
+        throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
       }
 
-      reserva.id_vehiculo = { id_vehiculo: dto.id_vehiculo } as Vehiculo;
+      reserva.vehiculo = vehiculo;
     }
 
-    Object.assign(reserva, dto);
     return this.reservasRepository.save(reserva);
   }
 
-
   async remove(id: string): Promise<void> {
-    await this.findOne(id);
-    await this.reservasRepository.delete(id);
+    const reserva = await this.findOne(id);
+    await this.reservasRepository.remove(reserva);
   }
 }

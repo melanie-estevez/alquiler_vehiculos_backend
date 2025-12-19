@@ -10,7 +10,6 @@ import { Vehiculo } from '../vehiculos/vehiculos.entity';
   imports: [
     TypeOrmModule.forFeature([
       Sucursales,
-      Vehiculo, 
     ]),
   ],
   controllers: [SucursalesController],

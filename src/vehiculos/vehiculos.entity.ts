@@ -1,46 +1,38 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { EstadoVehiculo } from './enums/estado-vehiculo.enum';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn} from 'typeorm';
+import { Sucursales } from '../sucursales/sucursales.entity';
 import { Reservas } from '../reservas/reservas.entity';
 import { Mantenimiento } from '../mantenimientos/mantenimientos.entity';
-import { Sucursales } from '../sucursales/sucursales.entity';
 
-@Entity('vehiculo')
+@Entity('vehiculos')
 export class Vehiculo {
   @PrimaryGeneratedColumn('uuid')
   id_vehiculo: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column()
   marca: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column()
   modelo: string;
 
-  @Column({ type: 'int' })
+  @Column()
   anio: number;
 
-  @Column({ type: 'varchar', length: 10 })
+  @Column()
   placa: string;
 
-  @Column({ type: 'decimal' })
-  precio_diario: number;
+  @Column({ default: true })
+  disponible: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: EstadoVehiculo,
-    default: EstadoVehiculo.DISPONIBLE,
+  @ManyToOne(() => Sucursales, sucursal => sucursal.vehiculos, {
+    nullable: true,
+    onDelete: 'SET NULL',
   })
-  estado: EstadoVehiculo;
-
-
-  @OneToMany(() => Reservas, (reserva) => reserva.id_vehiculo)
-  id_reservas: Reservas[];
-
-  @OneToMany(() => Mantenimiento, (mantenimiento) => mantenimiento.id_vehiculo)
-  id_mantenimientos: Mantenimiento[];
-
-
-  @ManyToOne(() => Sucursales, sucursal => sucursal.id_vehiculo)
   @JoinColumn({ name: 'id_sucursal' })
-  id_sucursal: Sucursales;
-  
+  sucursal: Sucursales | null;
+
+  @OneToMany(() => Reservas, reserva => reserva.vehiculo)
+  reservas: Reservas[];
+
+  @OneToMany(() => Mantenimiento, mantenimiento => mantenimiento.vehiculo)
+  mantenimientos: Mantenimiento[];
 }

@@ -1,61 +1,87 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Mantenimiento } from './mantenimientos.entity';
 import { CreateMantenimientoDto } from './dto/create-mantenimiento.dto';
 import { UpdateMantenimientoDto } from './dto/update-mantenimiento.dto';
+import { Vehiculo } from '../vehiculos/vehiculos.entity';
 
 @Injectable()
 export class MantenimientoService {
   constructor(
     @InjectRepository(Mantenimiento)
     private readonly mantenimientoRepository: Repository<Mantenimiento>,
+
+    @InjectRepository(Vehiculo)
+    private readonly vehiculoRepository: Repository<Vehiculo>,
   ) {}
 
-  create(dto: CreateMantenimientoDto) {
-   
-    const mantenimiento = this.mantenimientoRepository.create({
-      ...dto,
-      id_vehiculo: { id_vehiculo: dto.id_vehiculo },
+  async create(dto: CreateMantenimientoDto): Promise<Mantenimiento> {
+    const { id_vehiculo, ...data } = dto;
+
+    const vehiculo = await this.vehiculoRepository.findOne({
+      where: { id_vehiculo },
     });
 
-    return this.mantenimientoRepository.save(mantenimiento);
-  }
-
-  findAll() {
-    return this.mantenimientoRepository.find();
-  }
-
-  findOne(id_mantenimiento: string) {
-    return this.mantenimientoRepository.findOne({
-      where: { id_mantenimiento },
-    });
-  }
-
-  async update(id_mantenimiento: string, dto: UpdateMantenimientoDto) {
-    const mantenimiento = await this.mantenimientoRepository.findOne({
-      where: { id_mantenimiento },
-    });
-
-    if (!mantenimiento) return null;
-
-    // Si cambia el vehículo, convertir FK
-    if (dto.id_vehiculo) {
-      mantenimiento.id_vehiculo = { id_vehiculo: dto.id_vehiculo } as any;
+    if (!vehiculo) {
+      throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
     }
 
-    Object.assign(mantenimiento, dto);
+    const mantenimiento = this.mantenimientoRepository.create({
+      ...data,
+      vehiculo,
+    });
 
     return this.mantenimientoRepository.save(mantenimiento);
   }
 
-  async remove(id_mantenimiento: string) {
+  async findAll(): Promise<Mantenimiento[]> {
+    return this.mantenimientoRepository.find({
+      relations: ['vehiculo'],
+    });
+  }
+
+  async findOne(id_mantenimiento: string): Promise<Mantenimiento> {
     const mantenimiento = await this.mantenimientoRepository.findOne({
       where: { id_mantenimiento },
+      relations: ['vehiculo'],
     });
 
-    if (!mantenimiento) return null;
+    if (!mantenimiento) {
+      throw new NotFoundException(
+        `Mantenimiento ${id_mantenimiento} no existe`,
+      );
+    }
 
-    return this.mantenimientoRepository.remove(mantenimiento);
+    return mantenimiento;
+  }
+
+  async update(
+    id_mantenimiento: string,
+    dto: UpdateMantenimientoDto,
+  ): Promise<Mantenimiento> {
+    const mantenimiento = await this.findOne(id_mantenimiento);
+    const { id_vehiculo, ...data } = dto;
+
+    Object.assign(mantenimiento, data);
+
+    if (id_vehiculo !== undefined) {
+      const vehiculo = await this.vehiculoRepository.findOne({
+        where: { id_vehiculo },
+      });
+
+      if (!vehiculo) {
+        throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
+      }
+
+      mantenimiento.vehiculo = vehiculo;
+    }
+
+    return this.mantenimientoRepository.save(mantenimiento);
+  }
+
+  async remove(id_mantenimiento: string): Promise<void> {
+    const mantenimiento = await this.findOne(id_mantenimiento);
+    await this.mantenimientoRepository.remove(mantenimiento);
   }
 }

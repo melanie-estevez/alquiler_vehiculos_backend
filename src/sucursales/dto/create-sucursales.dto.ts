@@ -13,8 +13,4 @@ export class CreateSucursalesDto {
   @IsString()
   telefono: string;
 
-  @IsOptional()
-  @IsArray()
-  @IsUUID('all', { each: true })
-  id_vehiculo?: string[];
 }

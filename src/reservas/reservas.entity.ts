@@ -1,6 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Vehiculo } from '../vehiculos/vehiculos.entity';
 import { EstadoReserva } from './enums/estado-reserva.enum';
-import { Vehiculo } from '../vehiculos/vehiculos.entity'; 
 
 @Entity('reservas')
 export class Reservas {
@@ -8,15 +14,14 @@ export class Reservas {
   id_reserva: string;
 
   @Column()
-  id_cliente: string; 
+  id_cliente: string;
 
-  
-
-  @ManyToOne(() => Vehiculo, Vehiculo => Vehiculo.id_reservas, {
+  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.reservas, {
     onDelete: 'CASCADE',
     eager: true,
   })
-  id_vehiculo: Vehiculo;
+  @JoinColumn({ name: 'id_vehiculo' })
+  vehiculo: Vehiculo;
 
   @Column({ type: 'date' })
   fecha_inicio: Date;

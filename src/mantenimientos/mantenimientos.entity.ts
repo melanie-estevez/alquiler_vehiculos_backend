@@ -1,20 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
 import { EstadoRevision } from './enums/estado-revision.enum';
 import { EstadoMantenimiento } from './enums/estado-mantenimiento.enum';
 
-@Entity('mantenimiento')
+@Entity('mantenimientos')
 export class Mantenimiento {
   @PrimaryGeneratedColumn('uuid')
   id_mantenimiento: string;
 
-  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.id_mantenimientos, {
+  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.mantenimientos, {
     onDelete: 'CASCADE',
     eager: true,
   })
-  id_vehiculo: Vehiculo;
-
-
+  @JoinColumn({ name: 'id_vehiculo' })
+  vehiculo: Vehiculo;
 
   @Column({ type: 'date' })
   fecha_revision: Date;
@@ -26,7 +31,7 @@ export class Mantenimiento {
   })
   estado_revision: EstadoRevision;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ default: false })
   requiere_mantenimiento: boolean;
 
   @Column({

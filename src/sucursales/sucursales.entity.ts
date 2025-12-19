@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
 
 @Entity('sucursales')
@@ -18,6 +18,6 @@ export class Sucursales {
   @Column()
   telefono: string;
 
-  @OneToMany(() => Vehiculo, vehiculo => vehiculo.id_sucursal)
-  id_vehiculo: Vehiculo[]; 
+  @OneToMany(() => Vehiculo, vehiculo => vehiculo.sucursal)
+  vehiculos: Vehiculo[];
 }
