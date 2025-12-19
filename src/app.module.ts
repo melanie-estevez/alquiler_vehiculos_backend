@@ -8,10 +8,8 @@ import { VehiculosModule } from './vehiculos/vehiculos.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
-
 @Module({
   imports: [
-
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URI || ''),
     TypeOrmModule.forRoot({
@@ -23,11 +21,9 @@ import { UsersModule } from './users/users.module';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-
       //ssl: { rejectUnauthorized: false },
     }),
     VehiculosModule,AuthModule, UsersModule
-
   ],
   controllers: [AppController],
   providers: [AppService],

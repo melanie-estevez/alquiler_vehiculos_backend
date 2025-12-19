@@ -1,4 +1,3 @@
-
 Autenticación
 El sistema implementa autenticación basada en JWT.
 Los usuarios pueden registrarse mediante /auth/register y autenticarse con /auth/login.
