@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Cliente } from 'src/clientes/cliente.entity';
+import { Role } from 'src/auth/enums/role.enum';
 
 @Entity('users')
 export class User {
@@ -10,4 +12,14 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
+
+  @OneToOne(() => Cliente, (cliente) => cliente.user, { nullable: true })
+  cliente?: Cliente;
 }

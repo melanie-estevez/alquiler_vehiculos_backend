@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ClientesModule } from './clientes/clientes.module';
 import { SucursalesModule } from './sucursales/sucursales.module';
 import { VehiculosModule } from './vehiculos/vehiculos.module';
 import { ReservasModule } from './reservas/reservas.module';
@@ -31,8 +32,7 @@ import { PagosModule } from './pagos/pagos.module';
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, 
     }), 
-    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule
-
+    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule, ClientesModule
   ],
   controllers: [AppController],
   providers: [AppService],
