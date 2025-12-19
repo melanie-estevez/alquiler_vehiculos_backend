@@ -10,6 +10,12 @@ import { SucursalesModule } from './sucursales/sucursales.module';
 import { VehiculosModule } from './vehiculos/vehiculos.module';
 import { ReservasModule } from './reservas/reservas.module';
 import { MantenimientosModule}from './mantenimientos/mantenimientos.module';
+import { LogsModule } from './logs_acceso/logs.module';
+import { HistorialModule } from './historial_reservas/historial.module';
+import { AlquilerModule } from './alquileres/alquiler.module';
+import { PagosModule } from './pagos/pagos.module';
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,16 +27,11 @@ import { MantenimientosModule}from './mantenimientos/mantenimientos.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'], 
       synchronize: true,
-      // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
+      // ssl: { rejectUnauthorized: false }, 
     }), 
-    AuthModule, 
-    UsersModule, 
-    SucursalesModule,
-    VehiculosModule,
-    ReservasModule,
-    MantenimientosModule,
+    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule
 
   ],
   controllers: [AppController],
