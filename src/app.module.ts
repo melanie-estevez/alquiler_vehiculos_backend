@@ -4,6 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { LogsModule } from './logs_acceso/logs.module';
+import { HistorialModule } from './historial_reservas/historial.module';
 import { AlquilerModule } from './alquileres/alquiler.module';
 import { PagosModule } from './pagos/pagos.module';
 
@@ -18,10 +22,10 @@ import { PagosModule } from './pagos/pagos.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'], 
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }), PagosModule, AlquilerModule
+    }), AuthModule, UsersModule, LogsModule, HistorialModule, PagosModule, AlquilerModule
   ],
   controllers: [AppController],
   providers: [AppService],
