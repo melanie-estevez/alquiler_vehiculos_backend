@@ -1,9 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
-import { LoginDto } from './dto/login.dto';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+
+import { UsersService } from 'src/users/users.service';
+import { LoginDto } from './dto/login.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { Role } from 'src/auth/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -12,18 +14,23 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto) {
-    const user = await this.usersService.findByEmail(loginDto.email);
-    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-    const payload = { id: user.id, email: user.email };
-    return { access_token: this.jwtService.sign(payload) };
+  async register(dto: CreateUserDto) {
+    dto.role = Role.USER;
+    return this.usersService.create(dto);
   }
 
-  async register(createUserDto: CreateUserDto) {
-    const user = await this.usersService.create(createUserDto);
-    const payload = { id: user.id, email: user.email };
-    return { access_token: this.jwtService.sign(payload) };
+  async login(dto: LoginDto) {
+    const user = await this.usersService.findByEmail(dto.email);
+
+    if (!user) throw new UnauthorizedException('Credenciales inválidas');
+
+    const ok = await bcrypt.compare(dto.password, user.password);
+    if (!ok) throw new UnauthorizedException('Credenciales inválidas');
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

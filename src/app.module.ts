@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ClientesModule } from './clientes/clientes.module';
 
 @Module({
   imports: [
@@ -20,8 +21,8 @@ import { UsersModule } from './users/users.module';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-      // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }), AuthModule, UsersModule
+      // ssl: { rejectUnauthorized: false },
+    }), AuthModule, UsersModule, ClientesModule
   ],
   controllers: [AppController],
   providers: [AppService],
