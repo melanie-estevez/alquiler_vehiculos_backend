@@ -1,14 +1,14 @@
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsString, IsNumber, IsUUID, IsEnum, IsOptional, IsInt } from 'class-validator';
+import { EstadoVehiculo } from '../enums/estado-vehiculo.enum';
 
 export class UpdateVehiculoDto {
-
-@IsString()
+  @IsString()
   marca: string;
 
   @IsString()
   modelo: string;
-  
-  @IsNumber()
+
+  @IsInt()
   anio: number;
 
   @IsString()
@@ -17,7 +17,10 @@ export class UpdateVehiculoDto {
   @IsNumber()
   precio_diario: number;
 
-  @IsString()
-  estado: string
+  @IsEnum(EstadoVehiculo)
+  @IsOptional()
+  estado?: EstadoVehiculo;
 
+  @IsUUID()
+  id_sucursal: string;
 }

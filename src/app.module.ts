@@ -6,10 +6,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { SucursalesModule } from './sucursales/sucursales.module';
+import { VehiculosModule } from './vehiculos/vehiculos.module';
+import { ReservasModule } from './reservas/reservas.module';
+import { MantenimientosModule}from './mantenimientos/mantenimientos.module';
 import { LogsModule } from './logs_acceso/logs.module';
 import { HistorialModule } from './historial_reservas/historial.module';
 import { AlquilerModule } from './alquileres/alquiler.module';
 import { PagosModule } from './pagos/pagos.module';
+
 
 @Module({
   imports: [
@@ -24,8 +29,10 @@ import { PagosModule } from './pagos/pagos.module';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'], 
       synchronize: true,
-      // ssl: { rejectUnauthorized: false }, // solo si usan DB en la nube
-    }), AuthModule, UsersModule, LogsModule, HistorialModule, PagosModule, AlquilerModule
+      // ssl: { rejectUnauthorized: false }, 
+    }), 
+    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule
+
   ],
   controllers: [AppController],
   providers: [AppService],

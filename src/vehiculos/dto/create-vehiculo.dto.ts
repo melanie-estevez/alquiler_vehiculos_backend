@@ -1,15 +1,14 @@
-import { IsDate, IsNumber, IsString } 
-from 'class-validator';
+import { IsString, IsNumber, IsUUID, IsEnum, IsOptional, IsInt } from 'class-validator';
+import { EstadoVehiculo } from '../enums/estado-vehiculo.enum';
 
 export class CreateVehiculoDto {
-
   @IsString()
   marca: string;
 
   @IsString()
   modelo: string;
-  
-  @IsNumber()
+
+  @IsInt()
   anio: number;
 
   @IsString()
@@ -18,6 +17,11 @@ export class CreateVehiculoDto {
   @IsNumber()
   precio_diario: number;
 
-  @IsString()
-  estado: string
+  @IsEnum(EstadoVehiculo)
+  @IsOptional()
+  estado?: EstadoVehiculo;
+
+   @IsOptional()
+    @IsUUID('all', { each: true })
+    id_sucursal?: string;
 }
