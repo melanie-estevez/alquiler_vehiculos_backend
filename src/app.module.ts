@@ -15,6 +15,9 @@ import { LogsModule } from './logs_acceso/logs.module';
 import { HistorialModule } from './historial_reservas/historial.module';
 import { AlquilerModule } from './alquileres/alquiler.module';
 import { PagosModule } from './pagos/pagos.module';
+import { FacturasModule } from './facturas/facturas.module';
+import { DetallesFacturaModule } from './detalle_factura/detalle_factura.module';
+
 
 
 @Module({
@@ -32,7 +35,7 @@ import { PagosModule } from './pagos/pagos.module';
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, 
     }), 
-    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule, ClientesModule
+    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule, ClientesModule, FacturasModule, DetallesFacturaModule
   ],
   controllers: [AppController],
   providers: [AppService],

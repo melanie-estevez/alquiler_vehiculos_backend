@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import {Injectable, NotFoundException,BadRequestException,} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -102,11 +98,14 @@ export class UsersService {
     return this.stripPassword(user);
   }
 
-  async findByEmail(email: string) {
-    return this.userRepository.findOne({
-      where: { email },
-    });
+  async findByEmailWithPassword(email: string) {
+  return this.userRepository
+    .createQueryBuilder('user')
+    .addSelect('user.password')
+    .where('user.email = :email', { email })
+    .getOne();
   }
+
 
   async update(id: string, dto: UpdateUserDto) {
     const user = await this.userRepository.findOne({

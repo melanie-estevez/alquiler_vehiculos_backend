@@ -23,7 +23,6 @@ export class ClientesService {
   async findByUserId(userId: string) {
     const cliente = await this.clienteRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
     });
 
     if (!cliente) {

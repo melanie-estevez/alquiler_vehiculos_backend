@@ -12,6 +12,9 @@ export class Cliente {
   @Column()
   apellido: string;
 
+  @Column({length:10})
+  cedula:string;
+
   @Column()
   email: string;
 
@@ -22,9 +25,14 @@ export class Cliente {
   fecha_nacimiento: string;
 
   @Column()
+  licencia_conducir:boolean;
+
+  @Column()
   ciudad: string;
 
-  @OneToOne(() => User, (user) => user.cliente, { eager: true })
-  @JoinColumn({ name: 'user_id' })
+  @OneToOne(() => User, user => user.cliente)
+  @JoinColumn()
   user: User;
+  facturas: any;
+
 }

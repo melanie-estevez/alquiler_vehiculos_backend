@@ -7,6 +7,8 @@ export class CreateClienteDto {
   @IsString()
   apellido: string;
 
+  @IsNumber()
+
   @IsString()
   email: string;
 
@@ -15,6 +17,9 @@ export class CreateClienteDto {
 
   @IsDateString()
   fecha_nacimiento: string;
+
+  @IsString()
+  licencia_confucir: boolean;
 
   @IsString()
   ciudad:string;

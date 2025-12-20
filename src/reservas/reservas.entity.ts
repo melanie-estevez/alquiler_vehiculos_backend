@@ -38,4 +38,5 @@ export class Reservas {
     default: EstadoReserva.PENDIENTE,
   })
   estado: EstadoReserva;
+  facturas: any;
 }
