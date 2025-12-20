@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vehiculo } from './vehiculos.entity';
+import { Sucursales } from '../sucursales/sucursales.entity';
 import { CreateVehiculoDto } from './dto/create-vehiculo.dto';
 import { UpdateVehiculoDto } from './dto/update-vehiculo.dto';
-import { Sucursales } from '../sucursales/sucursales.entity';
 
 @Injectable()
 export class VehiculoService {
@@ -17,7 +17,7 @@ export class VehiculoService {
   ) {}
 
   async create(dto: CreateVehiculoDto): Promise<Vehiculo> {
-    const { id_sucursal, ...data } = dto;
+    const { id_sucursal, ...resto } = dto;
 
     let sucursal: Sucursales | null = null;
 
@@ -32,15 +32,15 @@ export class VehiculoService {
     }
 
     const vehiculo = this.vehiculoRepository.create({
-      ...data,
+      ...resto,
       sucursal,
     });
 
-    return this.vehiculoRepository.save(vehiculo);
+    return await this.vehiculoRepository.save(vehiculo);
   }
 
-  findAll(): Promise<Vehiculo[]> {
-    return this.vehiculoRepository.find({
+  async findAll(): Promise<Vehiculo[]> {
+    return await this.vehiculoRepository.find({
       relations: ['sucursal', 'reservas', 'mantenimientos'],
     });
   }
@@ -52,7 +52,7 @@ export class VehiculoService {
     });
 
     if (!vehiculo) {
-      throw new NotFoundException(`Vehículo ${id} no existe`);
+      throw new NotFoundException('Vehículo no encontrado');
     }
 
     return vehiculo;
@@ -60,9 +60,9 @@ export class VehiculoService {
 
   async update(id: string, dto: UpdateVehiculoDto): Promise<Vehiculo> {
     const vehiculo = await this.findOne(id);
-    const { id_sucursal, ...data } = dto;
+    const { id_sucursal, ...resto } = dto;
 
-    Object.assign(vehiculo, data);
+    Object.assign(vehiculo, resto);
 
     if (id_sucursal !== undefined) {
       if (id_sucursal === null) {
@@ -75,14 +75,18 @@ export class VehiculoService {
         if (!sucursal) {
           throw new NotFoundException('Sucursal no encontrada');
         }
+
         vehiculo.sucursal = sucursal;
       }
     }
-    return this.vehiculoRepository.save(vehiculo);
+
+    return await this.vehiculoRepository.save(vehiculo);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<{ message: string }> {
     const vehiculo = await this.findOne(id);
     await this.vehiculoRepository.remove(vehiculo);
+
+    return { message: 'Vehículo eliminado correctamente' };
   }
 }

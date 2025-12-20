@@ -6,42 +6,61 @@ import {
   Delete,
   Body,
   Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { SucursalesService } from './sucursales.service';
 import { CreateSucursalesDto } from './dto/create-sucursales.dto';
 import { UpdateSucursalesDto } from './dto/update-sucursales.dto';
+import { SuccessResponseDto } from 'src/common/dto/response.dto';
+import { mapSucursalToResponse } from './sucursales.mapper';
 
 @Controller('sucursales')
 export class SucursalesController {
-  constructor(
-    private readonly sucursalesService: SucursalesService,
-  ) {}
+  constructor(private readonly sucursalesService: SucursalesService) {}
 
   @Post()
-  create(@Body() dto: CreateSucursalesDto) {
-    return this.sucursalesService.create(dto);
+  async create(@Body() dto: CreateSucursalesDto) {
+    const sucursal = await this.sucursalesService.create(dto);
+    return new SuccessResponseDto(
+      'Sucursal creada correctamente',
+      mapSucursalToResponse(sucursal),
+    );
   }
 
   @Get()
-  findAll() {
-    return this.sucursalesService.findAll();
+  async findAll() {
+    const sucursales = await this.sucursalesService.findAll();
+    const data = sucursales.map(mapSucursalToResponse);
+
+    return new SuccessResponseDto('Sucursales obtenidas', data);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sucursalesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const sucursal = await this.sucursalesService.findOne(id);
+
+    if (!sucursal) throw new NotFoundException('Sucursal no encontrada');
+
+    return new SuccessResponseDto(
+      'Sucursal encontrada',
+      mapSucursalToResponse(sucursal),
+    );
   }
 
   @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateSucursalesDto,
-  ) {
-    return this.sucursalesService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateSucursalesDto) {
+    const sucursal = await this.sucursalesService.update(id, dto);
+
+    return new SuccessResponseDto(
+      'Sucursal actualizada correctamente',
+      mapSucursalToResponse(sucursal),
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sucursalesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.sucursalesService.remove(id);
+
+    return new SuccessResponseDto('Sucursal eliminada', null);
   }
 }

@@ -21,7 +21,7 @@ export class CreateVehiculoDto {
   @IsOptional()
   estado?: EstadoVehiculo;
 
-   @IsOptional()
-    @IsUUID('all', { each: true })
-    id_sucursal?: string;
+  @IsOptional()
+  @IsUUID('all', { each: true })
+  id_sucursal?: string;
 }

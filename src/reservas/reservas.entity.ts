@@ -16,11 +16,12 @@ export class Reservas {
   @PrimaryGeneratedColumn('uuid')
   id_reserva: string;
 
-  @ManyToOne(() => Cliente, (cliente) => cliente.reservas, {
-    onDelete: 'CASCADE',
-  })
+ // @ManyToOne(() => Cliente, (cliente) => cliente.reservas, {
+ //  onDelete: 'CASCADE',
+ // })
+
   @JoinColumn({ name: 'id_cliente' })
-  cliente: Cliente;
+  cliente: Cliente |  null;
 
   @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.reservas, {
     eager: true,

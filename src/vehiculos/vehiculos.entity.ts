@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { Sucursales } from '../sucursales/sucursales.entity';
 import { Reservas } from '../reservas/reservas.entity';
 import { Mantenimiento } from '../mantenimientos/mantenimientos.entity';
+import { EstadoVehiculo } from './enums/estado-vehiculo.enum';
 
 @Entity('vehiculos')
 export class Vehiculo {
@@ -20,8 +21,15 @@ export class Vehiculo {
   @Column()
   placa: string;
 
-  @Column({ default: true })
-  disponible: boolean;
+  @Column()
+  precio_diario: number;
+
+  @Column({
+    type: 'enum',
+    enum: EstadoVehiculo,
+    default: EstadoVehiculo.DISPONIBLE,
+  })
+  estado: EstadoVehiculo;
 
   @ManyToOne(() => Sucursales, sucursal => sucursal.vehiculos, {
     nullable: true,

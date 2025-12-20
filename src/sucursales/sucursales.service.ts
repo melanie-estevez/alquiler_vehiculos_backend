@@ -19,14 +19,14 @@ export class SucursalesService {
 
   async findAll(): Promise<Sucursales[]> {
     return this.sucursalRepository.find({
-      relations: ['vehiculo'], 
+      relations: ['vehiculos'], 
     });
   }
 
   async findOne(id: string): Promise<Sucursales> {
     const sucursal = await this.sucursalRepository.findOne({
       where: { id_sucursal: id },
-      relations: ['vehiculo'],
+      relations: ['vehiculos'], 
     });
 
     if (!sucursal) {
@@ -36,17 +36,15 @@ export class SucursalesService {
     return sucursal;
   }
 
-  async update(
-    id: string,
-    dto: UpdateSucursalesDto,
-  ): Promise<Sucursales> {
+  async update(id: string, dto: UpdateSucursalesDto): Promise<Sucursales> {
     const sucursal = await this.findOne(id);
     Object.assign(sucursal, dto);
     return this.sucursalRepository.save(sucursal);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<Sucursales> {
     const sucursal = await this.findOne(id);
     await this.sucursalRepository.remove(sucursal);
+    return sucursal;
   }
 }
