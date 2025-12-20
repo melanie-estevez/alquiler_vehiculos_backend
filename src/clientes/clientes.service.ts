@@ -16,11 +16,12 @@ export class ClientesService {
   constructor(
     @InjectRepository(Cliente)
     private readonly clienteRepo: Repository<Cliente>,
+
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async findByUserId(userId: string) {
+  async findByUserId(userId: string): Promise<Cliente> {
     const cliente = await this.clienteRepo.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
@@ -33,16 +34,24 @@ export class ClientesService {
     return cliente;
   }
 
-  async createForUser(userId: string, dto: CreateClienteDto) {
-    const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user) throw new NotFoundException('Usuario no existe');
+  async createForUser(userId: string, dto: CreateClienteDto): Promise<Cliente> {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no existe');
+    }
 
     const existing = await this.clienteRepo.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
     });
+
     if (existing) {
-      throw new BadRequestException('Este usuario ya tiene un cliente asociado');
+      throw new BadRequestException(
+        'Este usuario ya tiene un cliente asociado',
+      );
     }
 
     const cliente = this.clienteRepo.create({
@@ -53,25 +62,31 @@ export class ClientesService {
     return this.clienteRepo.save(cliente);
   }
 
-  async create(dto: CreateClienteDto) {
-    const cliente = this.clienteRepo.create(dto as any);
+  async create(dto: CreateClienteDto): Promise<Cliente> {
+    const cliente = this.clienteRepo.create(dto);
     return this.clienteRepo.save(cliente);
   }
 
-  async findAll() {
-    return this.clienteRepo.find({ relations: ['user'] });
-  }
-
-  async findOne(id: string) {
-    const cliente = await this.clienteRepo.findOne({
-      where: { id },
+  async findAll(): Promise<Cliente[]> {
+    return this.clienteRepo.find({
       relations: ['user'],
     });
-    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+  }
+
+  async findOne(id: string): Promise<Cliente> {
+    const cliente = await this.clienteRepo.findOne({
+      where: { id_cliente: id },
+      relations: ['user'],
+    });
+
+    if (!cliente) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
+
     return cliente;
   }
 
-  async update(id: string, dto: UpdateClienteDto) {
+  async update(id: string, dto: UpdateClienteDto): Promise<Cliente> {
     const cliente = await this.findOne(id);
     Object.assign(cliente, dto);
     return this.clienteRepo.save(cliente);

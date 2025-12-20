@@ -1,10 +1,16 @@
-import { IsUUID, IsDateString, IsEnum, IsNumber, Min, IsOptional, IsString } from 'class-validator';
+import {
+  IsUUID,
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  Min,
+  IsOptional,
+} from 'class-validator';
 import { EstadoReserva } from '../enums/estado-reserva.enum';
 
 export class UpdateReservaDto {
   @IsOptional()
-  //@IsUUID()
-  @IsString()
+  @IsUUID()
   id_cliente?: string;
 
   @IsOptional()

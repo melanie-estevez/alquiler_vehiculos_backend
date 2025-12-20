@@ -3,9 +3,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
+import { Cliente } from '../clientes/cliente.entity';
+import { Pago } from '../pagos/pagos.entity';
 import { EstadoReserva } from './enums/estado-reserva.enum';
 
 @Entity('reservas')
@@ -13,11 +16,13 @@ export class Reservas {
   @PrimaryGeneratedColumn('uuid')
   id_reserva: string;
 
-  @Column()
-  id_cliente: string;
-
-  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.reservas, {
+  @ManyToOne(() => Cliente, (cliente) => cliente.reservas, {
     onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
+
+  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.reservas, {
     eager: true,
   })
   @JoinColumn({ name: 'id_vehiculo' })
@@ -38,4 +43,8 @@ export class Reservas {
     default: EstadoReserva.PENDIENTE,
   })
   estado: EstadoReserva;
+
+ 
+  @OneToMany(() => Pago, (pago) => pago.reserva)
+  pagos: Pago[];
 }

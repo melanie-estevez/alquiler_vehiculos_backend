@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reservas } from './reservas.entity';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
+import { Cliente } from '../clientes/cliente.entity';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 
@@ -14,22 +15,32 @@ export class ReservaService {
 
     @InjectRepository(Vehiculo)
     private readonly vehiculoRepository: Repository<Vehiculo>,
+
+    @InjectRepository(Cliente)
+    private readonly clienteRepository: Repository<Cliente>,
   ) {}
 
   async create(dto: CreateReservaDto): Promise<Reservas> {
-    const { id_vehiculo, ...data } = dto;
+    const { id_vehiculo, id_cliente, ...data } = dto;
 
     const vehiculo = await this.vehiculoRepository.findOne({
       where: { id_vehiculo },
     });
-
     if (!vehiculo) {
       throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
+    }
+
+    const cliente = await this.clienteRepository.findOne({
+      where: { id_cliente: id_cliente },
+    });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente ${id_cliente} no existe`);
     }
 
     const reserva = this.reservasRepository.create({
       ...data,
       vehiculo,
+      cliente,
     });
 
     return this.reservasRepository.save(reserva);
@@ -37,14 +48,14 @@ export class ReservaService {
 
   async findAll(): Promise<Reservas[]> {
     return this.reservasRepository.find({
-      relations: ['vehiculo'],
+      relations: ['vehiculo', 'cliente'],
     });
   }
 
   async findOne(id: string): Promise<Reservas> {
     const reserva = await this.reservasRepository.findOne({
       where: { id_reserva: id },
-      relations: ['vehiculo'],
+      relations: ['vehiculo', 'cliente'],
     });
 
     if (!reserva) {
@@ -56,7 +67,7 @@ export class ReservaService {
 
   async update(id: string, dto: UpdateReservaDto): Promise<Reservas> {
     const reserva = await this.findOne(id);
-    const { id_vehiculo, ...data } = dto;
+    const { id_vehiculo, id_cliente, ...data } = dto;
 
     Object.assign(reserva, data);
 
@@ -64,12 +75,20 @@ export class ReservaService {
       const vehiculo = await this.vehiculoRepository.findOne({
         where: { id_vehiculo },
       });
-
       if (!vehiculo) {
         throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
       }
-
       reserva.vehiculo = vehiculo;
+    }
+
+    if (id_cliente !== undefined) {
+      const cliente = await this.clienteRepository.findOne({
+        where: { id_cliente: id_cliente },
+      });
+      if (!cliente) {
+        throw new NotFoundException(`Cliente ${id_cliente} no existe`);
+      }
+      reserva.cliente = cliente;
     }
 
     return this.reservasRepository.save(reserva);

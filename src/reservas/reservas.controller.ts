@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { ReservaService } from './reservas.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
@@ -22,9 +22,12 @@ export class ReservaController {
     return this.reservaService.findOne(id_reserva);
   }
 
-  @Put(':id_reserva')
-  update(@Param('id_reserva') id_reserva: string, @Body() UpdatereservaDto: UpdateReservaDto) {
-    return this.reservaService.update(id_reserva, UpdatereservaDto);
+  @Patch(':id_reserva')
+  update(
+    @Param('id_reserva') id_reserva: string,
+    @Body() updateReservaDto: UpdateReservaDto,
+  ) {
+    return this.reservaService.update(id_reserva, updateReservaDto);
   }
 
   @Delete(':id_reserva')

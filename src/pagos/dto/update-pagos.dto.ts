@@ -1,22 +1,28 @@
-import { IsOptional, IsString, IsNumber, IsDate } from 'class-validator';
+import {
+  IsOptional,
+  IsNumber,
+  IsString,
+  IsDateString,
+  Min,
+  IsEnum,
+} from 'class-validator';
+import { EstadoPago } from '../enums/estado-pagos.enum';
 
 export class UpdatePagosDto {
   @IsOptional()
-  @IsString()
-  id_pago: string;
-
-  @IsString()
-  id_reserva: string;
- 
   @IsNumber()
-  monto: number;
- 
+  @Min(0)
+  monto?: number;
+
+  @IsOptional()
   @IsString()
-  metodo: string;
- 
-  @IsString()
-  estado: string;
- 
-  @IsDate()
-  fecha_pago: Date;
+  metodo?: string;
+
+  @IsOptional()
+  @IsEnum(EstadoPago)
+  estado?: EstadoPago;
+
+  @IsOptional()
+  @IsDateString()
+  fecha_pago?: Date;
 }

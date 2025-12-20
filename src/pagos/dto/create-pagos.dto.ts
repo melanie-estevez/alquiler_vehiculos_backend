@@ -1,21 +1,27 @@
-import { IsString, IsNumber, IsDate } from 'class-validator';
+import {
+  IsUUID,
+  IsNumber,
+  IsString,
+  IsDateString,
+  Min,
+  IsEnum,
+} from 'class-validator';
+import { EstadoPago } from '../enums/estado-pagos.enum';
 
 export class CreatePagosDto {
-  @IsString()
-  id_pago: string;
-
-  @IsString()
+  @IsUUID()
   id_reserva: string;
 
   @IsNumber()
+  @Min(0)
   monto: number;
 
   @IsString()
   metodo: string;
 
-  @IsString()
-  estado: string;
+  @IsEnum(EstadoPago)
+  estado: EstadoPago;
 
-  @IsDate()
+  @IsDateString()
   fecha_pago: Date;
 }
