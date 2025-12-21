@@ -11,10 +11,10 @@ import { SucursalesModule } from './sucursales/sucursales.module';
 import { VehiculosModule } from './vehiculos/vehiculos.module';
 import { ReservasModule } from './reservas/reservas.module';
 import { MantenimientosModule}from './mantenimientos/mantenimientos.module';
-import { LogsModule } from './logs_acceso/logs.module';
 import { HistorialModule } from './historial_reservas/historial.module';
 import { AlquilerModule } from './alquileres/alquiler.module';
 import { PagosModule } from './pagos/pagos.module';
+import { Historial_usuarioModule } from './historial_usuario/historial_usuario.module';
 
 
 @Module({
@@ -32,7 +32,7 @@ import { PagosModule } from './pagos/pagos.module';
       synchronize: true,
       // ssl: { rejectUnauthorized: false }, 
     }), 
-    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, LogsModule, HistorialModule, PagosModule, AlquilerModule, ClientesModule
+    AuthModule, UsersModule, SucursalesModule, VehiculosModule, ReservasModule, MantenimientosModule, Historial_usuarioModule, HistorialModule, PagosModule, AlquilerModule, ClientesModule
   ],
   controllers: [AppController],
   providers: [AppService],
