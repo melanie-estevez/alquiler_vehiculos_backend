@@ -46,6 +46,6 @@ export class Reservas {
   estado: EstadoReserva;
 
  
-  @OneToMany(() => Pago, (pago) => pago.reserva)
-  pagos: Pago[];
+  //@OneToMany(() => Pago, (pago) => pago.reserva)
+  //pagos: Pago[];
 }

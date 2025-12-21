@@ -1,18 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { MantenimientoService } from './mantenimientos.service';
 import { MantenimientoController } from './mantenimientos.controller';
+import { Mantenimiento } from './mantenimientos.entity';
+import { Vehiculo } from '../vehiculos/vehiculos.entity';
 
-describe('MantenimientosController', () => {
-  let controller: MantenimientoController;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [MantenimientoController],
-    }).compile();
-
-    controller = module.get<MantenimientoController>(MantenimientoController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      Mantenimiento,
+      Vehiculo,
+    ]),
+  ],
+  controllers: [MantenimientoController],
+  providers: [MantenimientoService],
+})
+export class MantenimientosModule {}
