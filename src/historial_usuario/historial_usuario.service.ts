@@ -10,7 +10,6 @@ export class Historial_usuarioService {
   constructor(
     @InjectModel(Historial_usuario.name) private readonly historial_usuarioModel: Model<Historial_usuario>,
   ) {}
-
  async create(dto: CreateHistorial_usuarioDto): Promise<Historial_usuario>{
   console.log('DTO RECIBIDO:', dto);
     try {
@@ -26,7 +25,6 @@ export class Historial_usuarioService {
       throw new InternalServerErrorException('Error al crear el historial_usuario');
     }
   }
-
 async findAll(options: {page: number;limit: number;search?: string;searchField?: 'id_usuario' | 'accion';}): 
 Promise<{ items: Historial_usuario[]; page: number; limit: number }> {
   try {
@@ -74,13 +72,11 @@ Promise<{ items: Historial_usuario[]; page: number; limit: number }> {
       throw new InternalServerErrorException();
     }
   }
-
   async remove(id: string): Promise<void> {
     try {
       const historial_usuario = await this.historial_usuarioModel.findById(id);
       if (!historial_usuario) throw new NotFoundException();
-      await historial_usuario.deleteOne();
-    
+      await historial_usuario.deleteOne();   
     } catch (err) {
       console.error('Error deleting course:', err);
       throw new InternalServerErrorException();

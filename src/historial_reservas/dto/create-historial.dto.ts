@@ -1,15 +1,9 @@
-import { 
-  IsNotEmpty, 
-  IsString, 
-  IsDateString, 
-  IsUUID 
-} from 'class-validator';
-
+import { IsNotEmpty, IsString, IsDateString, IsUUID } from 'class-validator';
 export class CreateHistorialDto {
 
   @IsUUID()
   @IsNotEmpty()
-  id_reserva: string; 
+  id_reserva: string;
 
   @IsString()
   @IsNotEmpty()
@@ -22,5 +16,4 @@ export class CreateHistorialDto {
   @IsDateString()
   @IsNotEmpty()
   fecha: string;
-  id_usuario: any;
 }
