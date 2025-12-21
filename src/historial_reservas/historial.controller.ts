@@ -46,5 +46,4 @@ export class HistorialController {
     const historial = await this.historialService.remove(id);
     return new SuccessResponseDto('Course deleted successfully', historial);
   }
-}
-
+} 

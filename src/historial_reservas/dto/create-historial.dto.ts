@@ -1,15 +1,9 @@
-import { 
-  IsNotEmpty, 
-  IsString, 
-  IsDateString, 
-  IsUUID 
-} from 'class-validator';
-
+import { IsNotEmpty, IsString, IsDateString, IsUUID } from 'class-validator';
 export class CreateHistorialDto {
 
   @IsUUID()
   @IsNotEmpty()
-  id_reserva: string; // UUID de Postgres
+  id_reserva: string;
 
   @IsString()
   @IsNotEmpty()

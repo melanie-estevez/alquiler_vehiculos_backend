@@ -47,4 +47,3 @@ export class Historial_usuarioController {
     return new SuccessResponseDto('Course deleted successfully', historial_usuario);
   }
 }
-

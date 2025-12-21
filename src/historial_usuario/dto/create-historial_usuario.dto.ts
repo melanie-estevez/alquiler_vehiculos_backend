@@ -27,7 +27,7 @@ export class CreateHistorial_usuarioDto {
   @IsNotEmpty()
   @IsDateString()
   fecha: Date;
-
+  
   @ValidateNested()
   @Type(() => InstructorDto)
   instructor: InstructorDto;

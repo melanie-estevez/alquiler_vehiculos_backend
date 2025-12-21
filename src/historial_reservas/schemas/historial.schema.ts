@@ -5,7 +5,7 @@ import { Document } from 'mongoose';
 export class Historial extends Document {
 
   @Prop({ required: true })
-  id_reserva: number;   
+  id_reserva: string;   
 
   @Prop()
   estado_anterior: string;
