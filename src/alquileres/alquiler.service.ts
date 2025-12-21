@@ -12,10 +12,19 @@ export class AlquilerService {
     private readonly alquilerRepository: Repository<Alquiler>,
   ) {}
 
-  async create(createAlquilerDto: CreateAlquilerDto) {
-    const alquiler = this.alquilerRepository.create(createAlquilerDto);
+  async create(dto: CreateAlquilerDto) {
+    const alquiler = this.alquilerRepository.create({
+      fecha_entrega: new Date(dto.fecha_entrega),
+      fecha_devolucion: new Date(dto.fecha_devolucion),
+      km_inicial: dto.km_inicial,
+      km_final: dto.km_final,
+      estado: dto.estado,
+      reserva: { id_reserva: dto.id_reserva } as any, 
+    });
+
     return this.alquilerRepository.save(alquiler);
   }
+
 
   findAll() {
     return this.alquilerRepository.find();

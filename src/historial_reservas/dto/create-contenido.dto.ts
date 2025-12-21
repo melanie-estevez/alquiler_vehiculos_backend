@@ -1,27 +1,23 @@
 import { 
   IsNotEmpty, 
   IsString, 
-  IsUUID,
-  IsDateString
+  IsDateString, 
+  IsUUID 
 } from 'class-validator';
 
-export class CreateContenidoDto {
+export class CreateHistorialDto {
 
   @IsUUID()
   @IsNotEmpty()
-  id_usuario_pg: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  id_reserva_pg: string;
+  id_reserva: string; 
 
   @IsString()
   @IsNotEmpty()
-  descripcion: string;
+  estado_anterior: string;
 
   @IsString()
   @IsNotEmpty()
-  estado: string;
+  estado_nuevo: string;
 
   @IsDateString()
   @IsNotEmpty()

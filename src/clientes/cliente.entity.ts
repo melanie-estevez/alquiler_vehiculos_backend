@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
 import { User } from 'src/users/user.entity';
+import { Factura } from 'src/facturas/factura.entity';
 import { Reservas } from 'src/reservas/reservas.entity';
 
 @Entity('clientes')
@@ -13,6 +14,9 @@ export class Cliente {
   @Column()
   apellido: string;
 
+  @Column({length:10})
+  cedula:string;
+
   @Column()
   email: string;
 
@@ -23,13 +27,19 @@ export class Cliente {
   fecha_nacimiento: string;
 
   @Column()
+  licencia_conducir:boolean;
+
+  @Column()
   ciudad: string;
 
-  @OneToOne(() => User, (user) => user.cliente, { eager: true })
-  @JoinColumn({ name: 'user_id' })
+  @OneToOne(() => User, user => user.cliente)
+  @JoinColumn()
   user: User;
+  
+  @OneToMany(() => Factura, factura => factura.cliente)
+  facturas: Factura[];
 
- 
-  @OneToMany(() => Reservas, (reserva) => reserva.cliente)
+  @OneToMany(() => Reservas, (reservas) => reservas.cliente)
   reservas: Reservas[];
+ 
 }

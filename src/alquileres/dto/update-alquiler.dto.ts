@@ -1,22 +1,21 @@
-import { IsNotEmpty, IsString, IsDate } from 'class-validator';
+import { IsNotEmpty, IsString, IsDate, IsDateString, IsNumberString } from 'class-validator';
 
 export class UpdateAlquilerDto {
-  
 
   @IsString()
   @IsNotEmpty()
   id_reserva: string;
   
-  @IsDate()
-  fecha_entrega: Date;
+  @IsDateString()
+  fecha_entrega: string;
   
-  @IsDate()
-  fecha_devolucion: Date;
+  @IsDateString()
+  fecha_devolucion: string;
   
-  @IsString()
+  @IsNumberString()
   km_inicial: string;
   
-  @IsString()
+  @IsNumberString()
   km_final: string;
   
   @IsString()

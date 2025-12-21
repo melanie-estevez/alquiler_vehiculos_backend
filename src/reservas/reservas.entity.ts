@@ -10,7 +10,7 @@ import {
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
 import { EstadoReserva } from './enums/estado-reserva.enum';
 import { Cliente } from 'src/clientes/cliente.entity';
-
+import { Factura } from 'src/facturas/factura.entity';
 import { Pago } from 'src/pagos/pagos.entity';
 import { Alquiler } from 'src/alquileres/alquiler.entity';
 
@@ -45,8 +45,8 @@ export class Reservas {
   cliente: Cliente;
 
   
-  //@OneToMany(() => Factura, factura => factura.reserva)
-  //facturas: Factura[];
+  @OneToMany(() => Factura, factura => factura.reserva)
+  facturas: Factura[];
 
   @OneToMany(() => Pago, (pago) => pago.reserva)
   pagos: Pago[];

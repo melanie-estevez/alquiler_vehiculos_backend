@@ -1,17 +1,16 @@
-import {
-  IsOptional,
-  IsNumber,
-  IsString,
-  IsDateString,
-  Min,
-  IsEnum,
-} from 'class-validator';
-import { EstadoPago } from '../enums/estado-pagos.enum';
+import { IsOptional, IsString, IsNumber, IsDateString, IsUUID } from 'class-validator';
 
 export class UpdatePagosDto {
   @IsOptional()
+  @IsUUID()
+  id_factura?: string;
+
+  @IsOptional()
+  @IsUUID()
+  id_reserva?: string;
+
+  @IsOptional()
   @IsNumber()
-  @Min(0)
   monto?: number;
 
   @IsOptional()
@@ -19,10 +18,10 @@ export class UpdatePagosDto {
   metodo?: string;
 
   @IsOptional()
-  @IsEnum(EstadoPago)
-  estado?: EstadoPago;
+  @IsString()
+  estado?: string;
 
   @IsOptional()
   @IsDateString()
-  fecha_pago?: Date;
+  fecha_pago?: string;
 }

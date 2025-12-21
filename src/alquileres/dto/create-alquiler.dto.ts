@@ -1,25 +1,23 @@
-import { IsDate, IsString, IsNotEmpty } from 'class-validator';
+import { IsDate, IsString, IsNotEmpty, IsDateString, IsNumberString, IsUUID } from 'class-validator';
 
 export class CreateAlquilerDto {
   password(password: any, arg1: number) {
       throw new Error('Method not implemented.');
   }
-
-
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   id_reserva: string;
   
-  @IsDate()
-  fecha_entrega: Date;
+  @IsDateString()
+  fecha_entrega: string;
   
-  @IsDate()
-  fecha_devolucion: Date;
+  @IsDateString()
+  fecha_devolucion: string;
   
-  @IsString()
+  @IsNumberString()
   km_inicial: string;
   
-  @IsString()
+  @IsNumberString()
   km_final: string;
   
   @IsString()
