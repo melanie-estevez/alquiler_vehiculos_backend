@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Query } from '@nestjs/common';
+import {Controller,Get,Post,Put,Delete,Body,Param,UseGuards,Query} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,20 +7,26 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/auth/enums/role.enum';
 import { UserSerializer } from './serializers/user.serializer';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { User } from './user.entity';
+import { QueryDto } from 'src/common/dto/query.dto';
+import { SuccessResponseDto } from 'src/common/dto/response.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ): Promise<Pagination<User>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.usersService.findAll({ page, limit });
+  async findAll(@Query() queryDto: QueryDto) {
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
+
+    const result = await this.usersService.findAll(queryDto);
+
+    return new SuccessResponseDto(
+      'Listado de usuarios',
+      {
+        ...result,
+        items: result.items.map((u) => new UserSerializer(u)),
+      },
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -28,22 +34,36 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
-    return new UserSerializer(user); 
-  }
 
+    return new SuccessResponseDto(
+      'Usuario creado correctamente',
+      new UserSerializer(user),
+    );
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
-    return new UserSerializer(user); 
+
+    return new SuccessResponseDto(
+      'Usuario encontrado',
+      new UserSerializer(user),
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     const user = await this.usersService.update(id, updateUserDto);
-    return new UserSerializer(user); 
+
+    return new SuccessResponseDto(
+      'Usuario actualizado correctamente',
+      new UserSerializer(user),
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -51,13 +71,22 @@ export class UsersController {
   @Put(':id/role')
   async updateRole(@Param('id') id: string, @Body('role') role: Role) {
     const user = await this.usersService.updateRole(id, role);
-    return new UserSerializer(user); 
+
+    return new SuccessResponseDto(
+      'Rol actualizado correctamente',
+      new UserSerializer(user),
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+    await this.usersService.remove(id);
+
+    return new SuccessResponseDto(
+      'Usuario eliminado correctamente',
+      null,
+    );
   }
 }

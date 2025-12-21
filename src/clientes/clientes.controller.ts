@@ -1,53 +1,65 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Req, UseGuards, Query } from '@nestjs/common';
+import {Controller,Get,Post,Body,Param,Put,Delete,Req,UseGuards,Query} from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Cliente } from './cliente.entity';
+import { QueryDto } from 'src/common/dto/query.dto';
+import { SuccessResponseDto } from 'src/common/dto/response.dto';
 
 @Controller('clientes')
 export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
 
   @Get()
-  findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ): Promise<Pagination<Cliente>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.clientesService.findAll({ page, limit });
+  async findAll(@Query() queryDto: QueryDto) {
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
+
+    const result = await this.clientesService.findAll(queryDto);
+
+    return new SuccessResponseDto('Listado de clientes', result);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('me')
-  createMe(@Req() req: any, @Body() dto: CreateClienteDto) {
-    return this.clientesService.createForUser(req.user.sub, dto);
+  async createMe(@Req() req: any, @Body() dto: CreateClienteDto) {
+    const cliente = await this.clientesService.createForUser(req.user.sub, dto);
+
+    return new SuccessResponseDto('Cliente creado correctamente', cliente);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  me(@Req() req: any) {
-    return this.clientesService.findByUserId(req.user.sub);
+  async me(@Req() req: any) {
+    const cliente = await this.clientesService.findByUserId(req.user.sub);
+
+    return new SuccessResponseDto('Cliente encontrado', cliente);
   }
 
   @Post()
-  create(@Body() dto: CreateClienteDto) {
-    return this.clientesService.create(dto);
+  async create(@Body() dto: CreateClienteDto) {
+    const cliente = await this.clientesService.create(dto);
+
+    return new SuccessResponseDto('Cliente creado correctamente', cliente);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const cliente = await this.clientesService.findOne(id);
+
+    return new SuccessResponseDto('Cliente encontrado', cliente);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateClienteDto) {
-    return this.clientesService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateClienteDto) {
+    const cliente = await this.clientesService.update(id, dto);
+
+    return new SuccessResponseDto('Cliente actualizado correctamente', cliente);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientesService.remove(id);
+  async remove(@Param('id') id: string) {
+    const result = await this.clientesService.remove(id);
+
+    return new SuccessResponseDto('Cliente eliminado correctamente', result);
   }
 }

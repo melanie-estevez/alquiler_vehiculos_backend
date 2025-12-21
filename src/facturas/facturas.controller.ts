@@ -1,29 +1,44 @@
-import { Controller, Post, Body, Get, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Put, Delete } from '@nestjs/common';
 import { FacturasService } from './facturas.service';
 import { CreateFacturaDto } from './dto/create-factura.dto';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { Factura } from './factura.entity';
+import { UpdateFacturaDto } from './dto/update-factura.dto';
+import { QueryDto } from 'src/common/dto/query.dto';
+import { SuccessResponseDto } from 'src/common/dto/response.dto';
 
 @Controller('facturas')
 export class FacturasController {
   constructor(private readonly service: FacturasService) {}
 
   @Post()
-  create(@Body() dto: CreateFacturaDto) {
-    return this.service.create(dto);
+  async create(@Body() dto: CreateFacturaDto) {
+    const factura = await this.service.create(dto);
+    return new SuccessResponseDto('Factura creada correctamente', factura);
   }
 
   @Get()
-  findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ): Promise<Pagination<Factura>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.service.findAll({ page, limit });
+  async findAll(@Query() queryDto: QueryDto) {
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
+    const result = await this.service.findAll(queryDto);
+    return new SuccessResponseDto('Listado de facturas', result);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const factura = await this.service.findOne(id);
+    return new SuccessResponseDto('Factura encontrada', factura);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateFacturaDto,
+  ) {
+    const factura = await this.service.update(id, dto);
+    return new SuccessResponseDto('Factura actualizada correctamente', factura);
+  }
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    const result = await this.service.remove(id);
+    return new SuccessResponseDto('Factura eliminada correctamente', result);
   }
 }

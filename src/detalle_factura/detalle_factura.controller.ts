@@ -4,6 +4,7 @@ import { CreateDetalleFacturaDto } from './dto/create-detalle_factura.dto';
 import { UpdateDetalleFacturaDto } from './dto/update-detalle_factura.dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { DetalleFactura } from './detalle_factura.entity';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @Controller('detallesfactura')
 export class DetallesFacturaController {
@@ -15,13 +16,11 @@ export class DetallesFacturaController {
   }
 
   @Get()
-  findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ): Promise<Pagination<DetalleFactura>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.detallesfacturaService.findAll({ page, limit });
+  findAll(@Query() queryDto: QueryDto) {
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
+    return this.detallesfacturaService.findAll(queryDto);
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
