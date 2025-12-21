@@ -1,9 +1,7 @@
 import { IsNotEmpty, IsString, IsDate } from 'class-validator';
 
 export class UpdateAlquilerDto {
-  @IsString()
-  @IsNotEmpty()
-  id_alquiler: string;
+  
 
   @IsString()
   @IsNotEmpty()

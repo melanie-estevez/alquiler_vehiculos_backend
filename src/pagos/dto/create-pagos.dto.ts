@@ -12,6 +12,9 @@ export class CreatePagosDto {
   @IsUUID()
   id_reserva: string;
 
+   @IsUUID()
+  id_factura: string;
+
   @IsNumber()
   @Min(0)
   monto: number;

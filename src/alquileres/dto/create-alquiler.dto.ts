@@ -4,9 +4,7 @@ export class CreateAlquilerDto {
   password(password: any, arg1: number) {
       throw new Error('Method not implemented.');
   }
-  @IsString()
-  @IsNotEmpty()
-  id_alquiler: string;
+
 
   @IsString()
   @IsNotEmpty()

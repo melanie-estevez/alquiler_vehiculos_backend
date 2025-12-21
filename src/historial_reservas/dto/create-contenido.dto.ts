@@ -1,44 +1,29 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean, IsDateString } from 'class-validator';
+import { 
+  IsNotEmpty, 
+  IsString, 
+  IsUUID,
+  IsDateString
+} from 'class-validator';
 
 export class CreateContenidoDto {
-  @IsNotEmpty()
-  @IsString()
-  titulo: string;
 
+  @IsUUID()
   @IsNotEmpty()
-  @IsNumber()
-  ip: number;
+  id_usuario_pg: string;
 
+  @IsUUID()
   @IsNotEmpty()
+  id_reserva_pg: string;
+
   @IsString()
+  @IsNotEmpty()
   descripcion: string;
 
-  @IsNotEmpty()
   @IsString()
-  tipo: string;
-
   @IsNotEmpty()
-  @IsString()
-  enlace: string;
+  estado: string;
 
-  @IsNotEmpty()
-  @IsString()
-  dificultad: string;
-
-  @IsNotEmpty()
   @IsDateString()
-  fecha_publicacion: Date;
-
   @IsNotEmpty()
-  @IsBoolean()
-  completado: boolean;
-
-  @IsNotEmpty()
-  @IsString()
-  tiempo_estimado: string;
-
-  @IsNotEmpty()
-  @IsString()
-  video_id: string;
-  duracion: string;
+  fecha: string;
 }

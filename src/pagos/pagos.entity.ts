@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
+//import { Factura } from 'src/facturas/factura.entity';
+import { Reservas } from 'src/reservas/reservas.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany} from 'typeorm';
 
 @Entity('pago')
 export class Pago {
@@ -19,4 +21,12 @@ export class Pago {
 
   @Column()
   fecha_pago: Date;
+
+ // @ManyToOne(() => Factura, factura => factura.pagos, { onDelete: 'CASCADE' })
+  //@JoinColumn({ name: 'id_factura' })
+  //factura: Factura;
+
+  @OneToMany(() => Reservas, (reserva) => reserva.pagos,) 
+  @JoinColumn({ name: 'id_reserva' })
+  reserva: Reservas;
 }

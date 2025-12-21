@@ -3,31 +3,26 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  OneToMany,
   JoinColumn,
+  OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
-import { Cliente } from '../clientes/cliente.entity';
-import { Pago } from '../pagos/pagos.entity';
 import { EstadoReserva } from './enums/estado-reserva.enum';
+import { Cliente } from 'src/clientes/cliente.entity';
+
+import { Pago } from 'src/pagos/pagos.entity';
+import { Alquiler } from 'src/alquileres/alquiler.entity';
 
 @Entity('reservas')
 export class Reservas {
   @PrimaryGeneratedColumn('uuid')
   id_reserva: string;
 
- // @ManyToOne(() => Cliente, (cliente) => cliente.reservas, {
- //  onDelete: 'CASCADE',
- // })
-
-  @JoinColumn({ name: 'id_cliente' })
-  cliente: Cliente |  null;
-
-  @ManyToOne(() => Vehiculo, (vehiculo) => vehiculo.reservas, {
-    eager: true,
-  })
+  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.reservas, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_vehiculo' })
   vehiculo: Vehiculo;
+ 
 
   @Column({ type: 'date' })
   fecha_inicio: Date;
@@ -45,7 +40,18 @@ export class Reservas {
   })
   estado: EstadoReserva;
 
- 
-  //@OneToMany(() => Pago, (pago) => pago.reserva)
-  //pagos: Pago[];
+  @ManyToOne(() => Cliente, (cliente) => cliente.reservas)
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: Cliente;
+
+  
+  //@OneToMany(() => Factura, factura => factura.reserva)
+  //facturas: Factura[];
+
+  @OneToMany(() => Pago, (pago) => pago.reserva)
+  pagos: Pago[];
+
+  
+  @OneToOne(() => Alquiler, (alquiler) => alquiler.reserva)
+  alquiler: Alquiler;
 }
