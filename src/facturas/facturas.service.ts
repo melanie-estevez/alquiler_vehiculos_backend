@@ -7,6 +7,9 @@ import { CreateFacturaDto } from './dto/create-factura.dto';
 import { Reservas } from '../reservas/reservas.entity';
 import { Cliente } from '../clientes/cliente.entity';
 import { EstadoFactura } from './enums/estado-factura.enum';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { In } from 'typeorm/browser';
+
 
 
 @Injectable()
@@ -22,9 +25,15 @@ export class FacturasService {
     private clienteRepo: Repository<Cliente>,
   ) {}
 
+  async findAll(options: IPaginationOptions): Promise<Pagination<Factura>> {
+    const queryBuilder = this.facturaRepo.createQueryBuilder('factura');
+    return paginate<Factura>(queryBuilder, options);
+  }
+
   async create(dto: CreateFacturaDto): Promise<Factura> {
     const reserva = await this.reservaRepo.findOne({ where: { id_reserva: dto.id_reserva } });
     const cliente = await this.clienteRepo.findOne({ where: { id: dto.id_cliente } });
+
 
     if (!reserva || !cliente) throw new NotFoundException('Reserva o Cliente no existe');
 
@@ -40,8 +49,8 @@ export class FacturasService {
     const total = subtotal + iva;
 
     const factura = this.facturaRepo.create({
-      id_reserva: reserva,
-      id_cliente: cliente,
+      reserva,
+      cliente,
       subtotal,
       iva,
       total,
@@ -51,10 +60,6 @@ export class FacturasService {
 
 
     return this.facturaRepo.save(factura);
-  }
-
-  findAll() {
-    return this.facturaRepo.find({ relations: ['detalles', 'id_cliente', 'id_reserva'] });
   }
 
   findOne(id: string) {

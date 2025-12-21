@@ -1,7 +1,17 @@
-import { IsOptional, IsString } from 'class-validator';
+import {IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class UpdateDetalleFacturaDto {
   @IsString()
   @IsOptional()
-  name?: string;
+  descripcion?: string;
+
+  @IsNumber()
+  @IsOptional()
+  cantidad?: number;
+
+  @IsNumber()
+  @IsOptional()
+  precio_unitario?: number;
 }
+
+

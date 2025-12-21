@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { DetalleFactura } from './detalle_factura.entity';
 import { CreateDetalleFacturaDto } from './dto/create-detalle_factura.dto';
 import { UpdateDetalleFacturaDto } from './dto/update-detalle_factura.dto';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class DetallesFacturaService {
@@ -11,15 +12,16 @@ export class DetallesFacturaService {
     @InjectRepository(DetalleFactura)
     private readonly detallefacturaRepository: Repository<DetalleFactura>,
   ) {}
-
+  
+  async findAll(options: IPaginationOptions): Promise<Pagination<DetalleFactura>> {
+    const queryBuilder = this.detallefacturaRepository.createQueryBuilder('detallefactura');
+    return paginate<DetalleFactura>(queryBuilder, options);
+  }
   create(createDetalleFacturaDto: CreateDetalleFacturaDto) {
     const detallefactura = this.detallefacturaRepository.create(createDetalleFacturaDto);
     return this.detallefacturaRepository.save(detallefactura);
   }
 
-  findAll() {
-    return this.detallefacturaRepository.find();
-  }
 
   findOne(id_detalle: string) {
     return this.detallefacturaRepository.findOne({ where: { id_detalle} });

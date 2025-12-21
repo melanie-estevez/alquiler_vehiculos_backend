@@ -1,10 +1,10 @@
-import { IsString, IsNumber, IsDate } from 'class-validator';
+import { IsString, IsNumber, IsDateString, IsUUID } from 'class-validator';
 
 export class CreatePagosDto {
-  @IsString()
-  id_pago: string;
+  @IsUUID()
+  id_factura: string;
 
-  @IsString()
+  @IsUUID()
   id_reserva: string;
 
   @IsNumber()
@@ -16,6 +16,6 @@ export class CreatePagosDto {
   @IsString()
   estado: string;
 
-  @IsDate()
-  fecha_pago: Date;
+  @IsDateString()
+  fecha_pago: string;
 }

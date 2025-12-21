@@ -1,7 +1,16 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsUUID, IsOptional, IsEnum } from 'class-validator';
+import { EstadoFactura } from '../enums/estado-factura.enum';
 
 export class UpdateFacturaDto {
-  @IsString()
   @IsOptional()
-  name?: string;
+  @IsUUID()
+  id_reserva?: string;
+
+  @IsOptional()
+  @IsUUID()
+  id_cliente?: string;
+
+  @IsOptional()
+  @IsEnum(EstadoFactura)
+  estado?: EstadoFactura;
 }

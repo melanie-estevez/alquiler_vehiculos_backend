@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query } from '@nestjs/common';
 import { FacturasService } from './facturas.service';
 import { CreateFacturaDto } from './dto/create-factura.dto';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { Factura } from './factura.entity';
 
 @Controller('facturas')
 export class FacturasController {
@@ -12,8 +14,12 @@ export class FacturasController {
   }
 
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ): Promise<Pagination<Factura>> {
+    limit = limit > 100 ? 100 : limit;
+    return this.service.findAll({ page, limit });
   }
 
   @Get(':id')

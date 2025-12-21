@@ -6,6 +6,7 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from 'src/auth/enums/role.enum';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,11 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-
+  
+  async findAll(options: IPaginationOptions): Promise<Pagination<User>> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    return paginate<User>(queryBuilder, options);
+  }
   private stripPassword(user: User) {
     if (!user) return user;
     const { password, ...rest } = user as any;
@@ -75,14 +80,6 @@ export class UsersService {
 
     const saved = await this.userRepository.save(user);
     return this.stripPassword(saved);
-  }
-
-
-  async findAll() {
-    const users = await this.userRepository.find({
-      relations: ['cliente'],
-    });
-    return this.stripPasswordMany(users);
   }
 
   async findOne(id: string) {

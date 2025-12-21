@@ -1,5 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
 import { User } from 'src/users/user.entity';
+import { Factura } from 'src/facturas/factura.entity';
+import { Reservas } from 'src/reservas/reservas.entity';
 
 @Entity('clientes')
 export class Cliente {
@@ -33,6 +35,11 @@ export class Cliente {
   @OneToOne(() => User, user => user.cliente)
   @JoinColumn()
   user: User;
-  facturas: any;
+  
+  @OneToMany(() => Factura, factura => factura.cliente)
+  facturas: Factura[];
 
+  @OneToMany(() => Reservas, (reservas) => reservas.cliente)
+  reservas: Reservas[];
+ 
 }

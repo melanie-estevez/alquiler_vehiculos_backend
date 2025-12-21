@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsDate, IsDateString, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class CreateClienteDto {
   @IsString()
@@ -7,23 +7,21 @@ export class CreateClienteDto {
   @IsString()
   apellido: string;
 
-  @IsNumber()
+  @IsString()
+  cedula:string
 
   @IsString()
   email: string;
 
-  @IsNumber()
+  @IsString()
   celular: string;
 
   @IsDateString()
   fecha_nacimiento: string;
 
-  @IsString()
-  licencia_confucir: boolean;
+  @IsBoolean()
+  licencia_conducir: boolean;
 
   @IsString()
   ciudad:string;
-
-  @IsUUID()
-  user_id: string;
 }

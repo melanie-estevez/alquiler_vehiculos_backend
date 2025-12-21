@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Factura } from '../facturas/factura.entity';
 
 @Entity('detalle_factura')
@@ -19,6 +19,7 @@ export class DetalleFactura {
   total: number;
 
   @ManyToOne(() => Factura, factura => factura.detalles, { onDelete: 'CASCADE' })
-  id_factura: Factura;
+  @JoinColumn({name:'id_factura'}) factura:Factura;
+
 }
 
