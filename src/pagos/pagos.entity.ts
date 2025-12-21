@@ -1,24 +1,14 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import { Reservas } from '../reservas/reservas.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
 
-@Entity('pagos')
+@Entity('pago')
 export class Pago {
   @PrimaryGeneratedColumn('uuid')
   id_pago: string;
 
-  @ManyToOne(() => Reservas, (reserva) => reserva.pagos, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'id_reserva' })
-  reserva: Reservas;
+  @Column()
+  id_reserva: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column()
   monto: number;
 
   @Column()
@@ -27,6 +17,6 @@ export class Pago {
   @Column()
   estado: string;
 
-  @Column({ type: 'timestamp' })
+  @Column()
   fecha_pago: Date;
 }
