@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateClienteDto {
   @IsOptional()
@@ -11,6 +11,10 @@ export class UpdateClienteDto {
 
   @IsOptional()
   @IsString()
+  cedula?: string;
+
+  @IsOptional()
+  @IsString()
   email?: string;
 
   @IsOptional()
@@ -20,6 +24,10 @@ export class UpdateClienteDto {
   @IsOptional()
   @IsDate()
   fecha_nacimiento?: Date;
+
+  @IsOptional()
+  @IsBoolean()
+  licencia_conducir?: string;
 
   @IsOptional()
   @IsString()

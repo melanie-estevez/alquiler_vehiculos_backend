@@ -1,15 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import {Injectable, NotFoundException, BadRequestException,} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import { Cliente } from './cliente.entity';
 import { User } from 'src/users/user.entity';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ClientesService {
@@ -19,11 +15,15 @@ export class ClientesService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
+  
+  async findAll(options: IPaginationOptions): Promise<Pagination<Cliente>> {
+    const queryBuilder = this.clienteRepo.createQueryBuilder('cliente');
+    return paginate<Cliente>(queryBuilder, options);
+  }
 
   async findByUserId(userId: string) {
     const cliente = await this.clienteRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
     });
 
     if (!cliente) {
@@ -56,10 +56,6 @@ export class ClientesService {
   async create(dto: CreateClienteDto) {
     const cliente = this.clienteRepo.create(dto as any);
     return this.clienteRepo.save(cliente);
-  }
-
-  async findAll() {
-    return this.clienteRepo.find({ relations: ['user'] });
   }
 
   async findOne(id: string) {

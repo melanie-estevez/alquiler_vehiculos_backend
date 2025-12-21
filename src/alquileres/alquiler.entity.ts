@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Reservas } from 'src/reservas/reservas.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity('alquiler')
 export class Alquiler {
   @PrimaryGeneratedColumn('uuid')
   id_alquiler: string;
-
-  @Column({ unique: true })
-  id_reserva: string;
 
   @Column()
   fecha_entrega: Date;
@@ -23,6 +21,7 @@ export class Alquiler {
   @Column()
   estado: string;
 
-  @Column()
-  pagos: Number;
+  @OneToOne(() => Reservas, (reserva) => reserva.alquiler, )
+  @JoinColumn({ name: 'id_reserva' })
+  reserva: Reservas;
 }
