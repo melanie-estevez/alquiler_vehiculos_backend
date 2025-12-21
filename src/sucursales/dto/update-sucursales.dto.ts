@@ -1,20 +1,16 @@
-import { IsOptional, IsArray, IsUUID, IsString } from 'class-validator';
+import { IsString, IsOptional, IsUUID, IsArray } from 'class-validator';
 
 export class UpdateSucursalesDto {
-  @IsOptional()
   @IsString()
-  nombre?: string;
+  nombre: string;
 
-  @IsOptional()
   @IsString()
-  ciudad?: string;
+  ciudad: string;
 
-  @IsOptional()
   @IsString()
-  direccion?: string;
+  direccion: string;
 
-  @IsOptional()
   @IsString()
-  telefono?: string;
+  telefono: string;
 
 }
