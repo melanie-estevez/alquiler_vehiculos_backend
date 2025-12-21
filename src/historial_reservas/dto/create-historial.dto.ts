@@ -1,41 +1,25 @@
-import { IsNotEmpty, IsString, IsArray, IsDateString, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { CreateContenidoDto } from './create-contenido.dto';
-
-class InstructorDto {
-  @IsNotEmpty()
-  @IsString()
-  id_reserva: string;
-
-  @IsNotEmpty()
-  @IsString()
-  estado_anterior: string;
-}
+import { 
+  IsNotEmpty, 
+  IsString, 
+  IsDateString, 
+  IsUUID 
+} from 'class-validator';
 
 export class CreateHistorialDto {
 
+  @IsUUID()
   @IsNotEmpty()
-  @IsString()
-  id_reserva: string;
+  id_reserva: string; // UUID de Postgres
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   estado_anterior: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   estado_nuevo: string;
 
-  @IsNotEmpty()
   @IsDateString()
-  fecha: Date;
-
-  @ValidateNested()
-  @Type(() => InstructorDto)
-  instructor: InstructorDto;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateContenidoDto)
-  contenidos: CreateContenidoDto[];
+  @IsNotEmpty()
+  fecha: string;
 }
