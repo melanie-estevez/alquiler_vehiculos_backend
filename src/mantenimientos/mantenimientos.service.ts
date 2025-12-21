@@ -1,10 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import {
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
+
 import { Mantenimiento } from './mantenimientos.entity';
 import { CreateMantenimientoDto } from './dto/create-mantenimiento.dto';
 import { UpdateMantenimientoDto } from './dto/update-mantenimiento.dto';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @Injectable()
 export class MantenimientoService {
@@ -35,10 +44,38 @@ export class MantenimientoService {
     return this.mantenimientoRepository.save(mantenimiento);
   }
 
-  async findAll(): Promise<Mantenimiento[]> {
-    return this.mantenimientoRepository.find({
-      relations: ['vehiculo'],
-    });
+  // 🔥 AQUÍ EL CAMBIO IMPORTANTE
+  async findAll(
+    queryDto: QueryDto,
+  ): Promise<Pagination<Mantenimiento>> {
+    try {
+      const { page, limit, search, sort, order } = queryDto;
+
+      const query = this.mantenimientoRepository
+        .createQueryBuilder('mantenimiento')
+        .leftJoinAndSelect('mantenimiento.vehiculo', 'vehiculo');
+
+      // 🔍 SEARCH SIMPLE
+      if (search) {
+        query.andWhere(
+          '(vehiculo.placa ILIKE :search OR mantenimiento.observaciones ILIKE :search)',
+          { search: `%${search}%` },
+        );
+      }
+
+      // 🔃 SORT SIMPLE
+      if (sort) {
+        query.orderBy(
+          `mantenimiento.${sort}`,
+          (order ?? 'DESC') as 'ASC' | 'DESC',
+        );
+      }
+
+      return await paginate<Mantenimiento>(query, { page, limit });
+    } catch (err) {
+      console.error('Error obteniendo mantenimientos:', err);
+      throw err;
+    }
   }
 
   async findOne(id_mantenimiento: string): Promise<Mantenimiento> {
