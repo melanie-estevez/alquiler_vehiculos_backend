@@ -1,22 +1,27 @@
-import { IsOptional, IsString, IsNumber, IsDate } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsDateString, IsUUID } from 'class-validator';
 
 export class UpdatePagosDto {
   @IsOptional()
-  @IsString()
-  id_pago: string;
+  @IsUUID()
+  id_factura?: string;
 
-  @IsString()
-  id_reserva: string;
- 
+  @IsOptional()
+  @IsUUID()
+  id_reserva?: string;
+
+  @IsOptional()
   @IsNumber()
-  monto: number;
- 
+  monto?: number;
+
+  @IsOptional()
   @IsString()
-  metodo: string;
- 
+  metodo?: string;
+
+  @IsOptional()
   @IsString()
-  estado: string;
- 
-  @IsDate()
-  fecha_pago: Date;
+  estado?: string;
+
+  @IsOptional()
+  @IsDateString()
+  fecha_pago?: string;
 }

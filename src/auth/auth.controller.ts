@@ -27,8 +27,8 @@ export class AuthController {
   @Post('bootstrap-admin')
   bootstrapAdmin() {
     return this.usersService.createFirstAdminIfNone(
-      'admin@test.com',
-      'Admin12345',
+      'admin@admin.com',
+      'admin12345',
     );
   }
 

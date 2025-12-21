@@ -6,11 +6,11 @@ import { Role } from 'src/auth/enums/role.enum';
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+  
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({select:false})
   password: string;
 
   @Column({

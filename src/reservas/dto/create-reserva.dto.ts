@@ -2,10 +2,9 @@ import { IsUUID, IsDateString, IsEnum, IsNumber, Min, IsString } from 'class-val
 import { EstadoReserva } from '../enums/estado-reserva.enum';
 
 export class CreateReservaDto {
-  //@IsUUID()
-  //id_cliente: string;
 
-  @IsString( )
+
+  @IsUUID()
   id_cliente: string;
 
   @IsUUID()
@@ -23,4 +22,6 @@ export class CreateReservaDto {
 
   @IsEnum(EstadoReserva)
   estado?: EstadoReserva; 
+
+  
 }
