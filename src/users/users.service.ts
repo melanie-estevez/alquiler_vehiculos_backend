@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import {Injectable, NotFoundException,BadRequestException,} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -10,6 +6,7 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from 'src/auth/enums/role.enum';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +14,11 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-
+  
+  async findAll(options: IPaginationOptions): Promise<Pagination<User>> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    return paginate<User>(queryBuilder, options);
+  }
   private stripPassword(user: User) {
     if (!user) return user;
     const { password, ...rest } = user as any;
@@ -81,14 +82,6 @@ export class UsersService {
     return this.stripPassword(saved);
   }
 
-
-  async findAll() {
-    const users = await this.userRepository.find({
-      relations: ['cliente'],
-    });
-    return this.stripPasswordMany(users);
-  }
-
   async findOne(id: string) {
     const user = await this.userRepository.findOne({
       where: { id },
@@ -102,11 +95,14 @@ export class UsersService {
     return this.stripPassword(user);
   }
 
-  async findByEmail(email: string) {
-    return this.userRepository.findOne({
-      where: { email },
-    });
+  async findByEmailWithPassword(email: string) {
+  return this.userRepository
+    .createQueryBuilder('user')
+    .addSelect('user.password')
+    .where('user.email = :email', { email })
+    .getOne();
   }
+
 
   async update(id: string, dto: UpdateUserDto) {
     const user = await this.userRepository.findOne({
