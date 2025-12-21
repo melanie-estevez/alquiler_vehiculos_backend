@@ -2,8 +2,6 @@ Instalacion de dependencias
 Antes de comenzar con la creacion de las tablas es importante instalar esta dependencia para que el backend no coloque ningun 
 error al ejecutar el programa, la dependencia que debemos instalar es la siguiente
 
-npm install
-
 Una vez que este instalado esto obtendra todas las dependencias que necesitara para el backend.
 Clonar el Repositorio
 Es importante clonar el repositorio en donde se esta trabajando el proyecto para obtener las tablas que estaremos trabajando

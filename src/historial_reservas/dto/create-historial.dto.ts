@@ -9,7 +9,7 @@ export class CreateHistorialDto {
 
   @IsUUID()
   @IsNotEmpty()
-  id_reserva: string; // UUID de Postgres
+  id_reserva: string; 
 
   @IsString()
   @IsNotEmpty()
@@ -22,4 +22,5 @@ export class CreateHistorialDto {
   @IsDateString()
   @IsNotEmpty()
   fecha: string;
+  id_usuario: any;
 }
