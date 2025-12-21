@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import {
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Reservas } from './reservas.entity';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @Injectable()
 export class ReservaService {
@@ -17,50 +22,9 @@ export class ReservaService {
   ) {}
 
   async create(dto: CreateReservaDto): Promise<Reservas> {
-    const { id_vehiculo, ...data } = dto;
+    try {
+      const { id_vehiculo, ...data } = dto;
 
-    const vehiculo = await this.vehiculoRepository.findOne({
-      where: { id_vehiculo },
-    });
-
-    if (!vehiculo) {
-      throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
-    }
-
-    const reserva = this.reservasRepository.create({
-      ...data,
-      vehiculo,
-    });
-
-    return this.reservasRepository.save(reserva);
-  }
-
-  async findAll(): Promise<Reservas[]> {
-    return this.reservasRepository.find({
-      relations: ['vehiculo'],
-    });
-  }
-
-  async findOne(id: string): Promise<Reservas> {
-    const reserva = await this.reservasRepository.findOne({
-      where: { id_reserva: id },
-      relations: ['vehiculo'],
-    });
-
-    if (!reserva) {
-      throw new NotFoundException(`Reserva ${id} no existe`);
-    }
-
-    return reserva;
-  }
-
-  async update(id: string, dto: UpdateReservaDto): Promise<Reservas> {
-    const reserva = await this.findOne(id);
-    const { id_vehiculo, ...data } = dto;
-
-    Object.assign(reserva, data);
-
-    if (id_vehiculo !== undefined) {
       const vehiculo = await this.vehiculoRepository.findOne({
         where: { id_vehiculo },
       });
@@ -69,14 +33,91 @@ export class ReservaService {
         throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
       }
 
-      reserva.vehiculo = vehiculo;
-    }
+      const reserva = this.reservasRepository.create({
+        ...data,
+        vehiculo,
+      });
 
-    return this.reservasRepository.save(reserva);
+      return await this.reservasRepository.save(reserva);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findAll(
+    queryDto: QueryDto,
+  ): Promise<Pagination<Reservas>> {
+    try {
+      const { page, limit, search } = queryDto;
+
+      const query = this.reservasRepository
+        .createQueryBuilder('reserva')
+        .leftJoinAndSelect('reserva.vehiculo', 'vehiculo');
+
+      // 🔍 filtro simple
+      if (search) {
+        query.andWhere(
+          `
+          vehiculo.placa ILIKE :search
+        `,
+          { search: `%${search}%` },
+        );
+      }
+
+      return await paginate<Reservas>(query, { page, limit });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOne(id: string): Promise<Reservas> {
+    try {
+      const reserva = await this.reservasRepository.findOne({
+        where: { id_reserva: id },
+        relations: ['vehiculo'],
+      });
+
+      if (!reserva) {
+        throw new NotFoundException(`Reserva ${id} no existe`);
+      }
+
+      return reserva;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(id: string, dto: UpdateReservaDto): Promise<Reservas> {
+    try {
+      const reserva = await this.findOne(id);
+      const { id_vehiculo, ...data } = dto;
+
+      Object.assign(reserva, data);
+
+      if (id_vehiculo !== undefined) {
+        const vehiculo = await this.vehiculoRepository.findOne({
+          where: { id_vehiculo },
+        });
+
+        if (!vehiculo) {
+          throw new NotFoundException(`Vehículo ${id_vehiculo} no existe`);
+        }
+
+        reserva.vehiculo = vehiculo;
+      }
+
+      return await this.reservasRepository.save(reserva);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async remove(id: string): Promise<void> {
-    const reserva = await this.findOne(id);
-    await this.reservasRepository.remove(reserva);
+    try {
+      const reserva = await this.findOne(id);
+      await this.reservasRepository.remove(reserva);
+    } catch (error) {
+      throw error;
+    }
   }
 }
