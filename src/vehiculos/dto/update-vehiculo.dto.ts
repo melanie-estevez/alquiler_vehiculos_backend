@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsUUID,
   IsEnum,
+  IsNumber,
 } from 'class-validator';
 import { EstadoVehiculo } from '../enums/estado-vehiculo.enum';
 
@@ -20,6 +21,9 @@ export class UpdateVehiculoDto {
   @IsInt()
   anio?: number;
 
+  @IsNumber()
+  precio_diario: number;
+
   @IsOptional()
   @IsString()
   placa?: string;
@@ -28,7 +32,7 @@ export class UpdateVehiculoDto {
   @IsEnum(EstadoVehiculo)
   estado?: EstadoVehiculo;
 
-  // puede venir UUID o null
+
   @IsOptional()
   id_sucursal?: string | null;
 }

@@ -7,12 +7,17 @@ import {
   Body,
   Param,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MantenimientoService } from './mantenimientos.service';
 import { CreateMantenimientoDto } from './dto/create-mantenimiento.dto';
 import { UpdateMantenimientoDto } from './dto/update-mantenimiento.dto';
 import { QueryDto } from 'src/common/dto/query.dto';
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
+import { Role } from 'src/auth/enums/role.enum';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('mantenimientos')
 export class MantenimientoController {
@@ -20,6 +25,8 @@ export class MantenimientoController {
     private readonly mantenimientoService: MantenimientoService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Post()
   async create(@Body() dto: CreateMantenimientoDto) {
     const mantenimiento = await this.mantenimientoService.create(dto);
@@ -32,7 +39,6 @@ export class MantenimientoController {
 
   @Get()
   async findAll(@Query() query: QueryDto) {
-    // límite de seguridad
     if (query.limit && query.limit > 100) {
       query.limit = 100;
     }
@@ -60,6 +66,9 @@ export class MantenimientoController {
     );
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+
   @Put(':id_mantenimiento')
   async update(
     @Param('id_mantenimiento') id_mantenimiento: string,
@@ -74,6 +83,8 @@ export class MantenimientoController {
     );
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Delete(':id_mantenimiento')
   async remove(@Param('id_mantenimiento') id_mantenimiento: string) {
     await this.mantenimientoService.remove(id_mantenimiento);

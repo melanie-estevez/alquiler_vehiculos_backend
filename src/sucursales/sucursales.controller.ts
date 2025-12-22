@@ -7,17 +7,24 @@ import {
   Body,
   Param,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { SucursalesService } from './sucursales.service';
 import { CreateSucursalesDto } from './dto/create-sucursales.dto';
 import { UpdateSucursalesDto } from './dto/update-sucursales.dto';
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
 import { QueryDto } from 'src/common/dto/query.dto';
+import { Role } from 'src/auth/enums/role.enum';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('sucursales')
 export class SucursalesController {
   constructor(private readonly sucursalesService: SucursalesService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Post()
   async create(@Body() dto: CreateSucursalesDto) {
     const sucursal = await this.sucursalesService.create(dto);
@@ -49,6 +56,8 @@ export class SucursalesController {
     );
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Put(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateSucursalesDto) {
     const sucursal = await this.sucursalesService.update(id, dto);
@@ -59,6 +68,8 @@ export class SucursalesController {
     );
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.sucursalesService.remove(id);

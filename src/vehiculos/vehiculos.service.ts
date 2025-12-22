@@ -37,18 +37,13 @@ export class VehiculoService {
       });
 
       return await this.vehiculoRepository.save(vehiculo);
-    } catch (err) {
-      console.error('Error creating vehiculo:', err);
+    } catch (error) {
+      console.error('Error creating vehiculo:', error);
       return null;
     }
   }
 
-
-  async findAll(
-    queryDto: QueryDto,
-    estado?: string,
-    idSucursal?: string,
-  ): Promise<Pagination<Vehiculo> | null> {
+  async findAll(queryDto: QueryDto): Promise<Pagination<Vehiculo> | null> {
     try {
       const { page, limit, search, searchField, sort, order } = queryDto;
 
@@ -56,51 +51,44 @@ export class VehiculoService {
         .createQueryBuilder('vehiculo')
         .leftJoinAndSelect('vehiculo.sucursal', 'sucursal');
 
-      // filtro por estado
-      if (estado) {
-        query.andWhere('vehiculo.estado = :estado', { estado });
-      }
-
-      if (idSucursal) {
-        query.andWhere('sucursal.id_sucursal = :idSucursal', {
-          idSucursal,
+  
+      if (search && searchField === 'estado') {
+        query.andWhere('vehiculo.estado = :estado', {
+          estado: search,
         });
       }
 
-     
-      if (search) {
-        if (searchField) {
-          switch (searchField) {
-            case 'marca':
-              query.andWhere('vehiculo.marca ILIKE :search', {
-                search: `%${search}%`,
-              });
-              break;
-            case 'modelo':
-              query.andWhere('vehiculo.modelo ILIKE :search', {
-                search: `%${search}%`,
-              });
-              break;
-            case 'placa':
-              query.andWhere('vehiculo.placa ILIKE :search', {
-                search: `%${search}%`,
-              });
-              break;
-            default:
-              query.andWhere(
-                '(vehiculo.marca ILIKE :search OR vehiculo.modelo ILIKE :search OR vehiculo.placa ILIKE :search)',
-                { search: `%${search}%` },
-              );
-          }
-        } else {
-          query.andWhere(
-            '(vehiculo.marca ILIKE :search OR vehiculo.modelo ILIKE :search OR vehiculo.placa ILIKE :search)',
-            { search: `%${search}%` },
-          );
+
+      if (search && searchField === 'anio') {
+        const anio = Number(search);
+        if (!isNaN(anio)) {
+          query.andWhere('vehiculo.anio = :anio', { anio });
         }
       }
 
-     
+
+      if (
+        search &&
+        searchField &&
+        !['estado', 'anio'].includes(searchField)
+      ) {
+        query.andWhere(
+          `vehiculo.${searchField} ILIKE :search`,
+          { search: `%${search}%` },
+        );
+      }
+
+
+      if (search && !searchField) {
+        query.andWhere(
+          `(vehiculo.marca ILIKE :search 
+            OR vehiculo.modelo ILIKE :search 
+            OR vehiculo.placa ILIKE :search)`,
+          { search: `%${search}%` },
+        );
+      }
+
+
       if (sort) {
         query.orderBy(
           `vehiculo.${sort}`,
@@ -109,25 +97,23 @@ export class VehiculoService {
       }
 
       return await paginate<Vehiculo>(query, { page, limit });
-    } catch (err) {
-      console.error('Error retrieving vehiculos:', err);
+    } catch (error) {
+      console.error('Error retrieving vehiculos:', error);
       return null;
     }
   }
 
-  
   async findOne(id: string): Promise<Vehiculo | null> {
     try {
       return await this.vehiculoRepository.findOne({
         where: { id_vehiculo: id },
         relations: ['sucursal', 'reservas', 'mantenimientos'],
       });
-    } catch (err) {
-      console.error('Error finding vehiculo:', err);
+    } catch (error) {
+      console.error('Error finding vehiculo:', error);
       return null;
     }
   }
-
 
   async update(
     id: string,
@@ -153,8 +139,8 @@ export class VehiculoService {
       }
 
       return await this.vehiculoRepository.save(vehiculo);
-    } catch (err) {
-      console.error('Error updating vehiculo:', err);
+    } catch (error) {
+      console.error('Error updating vehiculo:', error);
       return null;
     }
   }
@@ -165,8 +151,8 @@ export class VehiculoService {
       if (!vehiculo) return null;
 
       return await this.vehiculoRepository.remove(vehiculo);
-    } catch (err) {
-      console.error('Error deleting vehiculo:', err);
+    } catch (error) {
+      console.error('Error deleting vehiculo:', error);
       return null;
     }
   }
