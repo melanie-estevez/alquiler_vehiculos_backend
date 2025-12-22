@@ -6,12 +6,16 @@ import { CreateDetalleFacturaDto } from './dto/create-detalle_factura.dto';
 import { UpdateDetalleFacturaDto } from './dto/update-detalle_factura.dto';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { QueryDto } from 'src/common/dto/query.dto';
+import { Factura } from 'src/facturas/factura.entity';
 
 @Injectable()
 export class DetallesFacturaService {
+  
   constructor(
     @InjectRepository(DetalleFactura)
     private readonly detalleRepo: Repository<DetalleFactura>,
+    @InjectRepository(Factura)
+        private readonly facturaRepo: Repository<Factura>,
   ) {}
 
   private handleDbError(error: any, msg: string): never {
@@ -47,13 +51,26 @@ export class DetallesFacturaService {
   }
 
   async create(dto: CreateDetalleFacturaDto) {
-    try {
-      const detalle = this.detalleRepo.create(dto);
-      return await this.detalleRepo.save(detalle);
-    } catch (error) {
-      throw this.handleDbError(error, 'Error al crear detalle de factura');
+    const factura = await this.facturaRepo.findOne({
+      where: { id_factura: dto.id_factura },
+    });
+
+    if (!factura) {
+      throw new NotFoundException('Factura no encontrada');
     }
+
+    const detalle = this.detalleRepo.create({
+      descripcion: dto.descripcion,
+      cantidad: dto.cantidad,
+      precio_unitario: dto.precio_unitario,
+      total: dto.cantidad * dto.precio_unitario,
+      factura: factura,
+    });
+
+    return this.detalleRepo.save(detalle);
   }
+
+
 
   async findOne(id_detalle: string) {
     try {

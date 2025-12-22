@@ -14,4 +14,3 @@ export class UpdateDetalleFacturaDto {
   precio_unitario?: number;
 }
 
-

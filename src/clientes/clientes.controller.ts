@@ -5,6 +5,9 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { QueryDto } from 'src/common/dto/query.dto';
 import { SuccessResponseDto } from 'src/common/dto/response.dto';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/enums/role.enum';
 
 @Controller('clientes')
 export class ClientesController {
@@ -35,13 +38,6 @@ export class ClientesController {
     return new SuccessResponseDto('Cliente encontrado', cliente);
   }
 
-  @Post()
-  async create(@Body() dto: CreateClienteDto) {
-    const cliente = await this.clientesService.create(dto);
-
-    return new SuccessResponseDto('Cliente creado correctamente', cliente);
-  }
-
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const cliente = await this.clientesService.findOne(id);
@@ -55,7 +51,9 @@ export class ClientesController {
 
     return new SuccessResponseDto('Cliente actualizado correctamente', cliente);
   }
-
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const result = await this.clientesService.remove(id);

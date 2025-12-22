@@ -86,7 +86,7 @@ export class FacturasService {
         throw new BadRequestException('La factura debe tener detalles');
       }
 
-      const iva = subtotal * 0.12;
+      const iva = subtotal * 0.15;
       const total = subtotal + iva;
 
       const factura = this.facturaRepo.create({

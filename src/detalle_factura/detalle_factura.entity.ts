@@ -22,4 +22,3 @@ export class DetalleFactura {
   @JoinColumn({name:'id_factura'}) factura:Factura;
 
 }
-
