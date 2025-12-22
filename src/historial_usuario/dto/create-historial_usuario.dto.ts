@@ -1,24 +1,13 @@
-import { IsNotEmpty, IsString, IsDateString, ValidateNested, IsMongoId } from 'class-validator';
-import { Type } from 'class-transformer';
-
-class InstructorDto {
-  @IsNotEmpty()
-  @IsString()
-  id_usuario: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  fecha: Date;
-}
+import { IsNotEmpty, IsString, IsUUID, IsDateString } from 'class-validator';
 
 export class CreateHistorial_usuarioDto {
-
-  @IsMongoId()
-  id_reserva: string;
-
   @IsNotEmpty()
   @IsString()
   id_usuario: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  id_reserva: string;
 
   @IsNotEmpty()
   @IsString()
@@ -26,9 +15,5 @@ export class CreateHistorial_usuarioDto {
 
   @IsNotEmpty()
   @IsDateString()
-  fecha: Date;
-  
-  @ValidateNested()
-  @Type(() => InstructorDto)
-  instructor: InstructorDto;
+  fecha: string;
 }

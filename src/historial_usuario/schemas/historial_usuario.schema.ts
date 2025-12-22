@@ -1,26 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
-@Schema({ collection: 'historial_reservas', timestamps: true })
+@Schema({ collection: 'historial_usuario', timestamps: true })
 export class Historial_usuario extends Document {
+  @Prop({ required: true })
+  id_usuario: string;
 
   @Prop({ required: true })
-  id_reserva: string; 
+  id_reserva: string;
 
   @Prop({ required: true })
-  estado_anterior: string;
-
-  @Prop({ required: true })
-  estado_nuevo: string;
+  accion: string;
 
   @Prop({ required: true })
   fecha: Date;
-
-  @Prop({
-    type: [{ type: Types.ObjectId, ref: 'Contenido' }],
-    default: [],
-  })
-  contenidos: Types.ObjectId[];
 }
 
 export const Historial_usuarioSchema = SchemaFactory.createForClass(Historial_usuario);
