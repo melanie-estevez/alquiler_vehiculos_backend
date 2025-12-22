@@ -2,39 +2,65 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/
 import { DetallesFacturaService } from './detalle_factura.service';
 import { CreateDetalleFacturaDto } from './dto/create-detalle_factura.dto';
 import { UpdateDetalleFacturaDto } from './dto/update-detalle_factura.dto';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { DetalleFactura } from './detalle_factura.entity';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @Controller('detallesfactura')
 export class DetallesFacturaController {
-  constructor(private readonly detallesfacturaService: DetallesFacturaService) {}
+  constructor(
+    private readonly detallesfacturaService: DetallesFacturaService,
+  ) {}
 
   @Post()
-  create(@Body() createDetalleFacturaDto: CreateDetalleFacturaDto) {
-    return this.detallesfacturaService.create(createDetalleFacturaDto);
+  async create(@Body() dto: CreateDetalleFacturaDto) {
+    const data = await this.detallesfacturaService.create(dto);
+    return {
+      success: true,
+      message: 'Detalle de factura creado correctamente',
+      data,
+    };
   }
 
   @Get()
-  findAll(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ): Promise<Pagination<DetalleFactura>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.detallesfacturaService.findAll({ page, limit });
+  async findAll(@Query() queryDto: QueryDto) {
+    queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
+    const data = await this.detallesfacturaService.findAll(queryDto);
+    return {
+      success: true,
+      message: 'Listado de detalles de factura',
+      data,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.detallesfacturaService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const data = await this.detallesfacturaService.findOne(id);
+    return {
+      success: true,
+      message: 'Detalle de factura encontrado',
+      data,
+    };
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateDetalleFacturaDto: UpdateDetalleFacturaDto) {
-    return this.detallesfacturaService.update(id, updateDetalleFacturaDto);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateDetalleFacturaDto,
+  ) {
+    const data = await this.detallesfacturaService.update(id, dto);
+    return {
+      success: true,
+      message: 'Detalle de factura actualizado',
+      data,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.detallesfacturaService.remove(id);
+  async remove(@Param('id') id: string) {
+    const data = await this.detallesfacturaService.remove(id);
+    return {
+      success: true,
+      message: 'Detalle de factura eliminado',
+      data,
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsUUID } from 'class-validator';
 
 export class CreateDetalleFacturaDto {
   @IsString()
@@ -9,4 +9,7 @@ export class CreateDetalleFacturaDto {
 
   @IsNumber()
   precio_unitario: number;
+
+  @IsUUID()
+  id_factura: string;
 }

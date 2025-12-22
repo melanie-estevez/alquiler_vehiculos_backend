@@ -23,7 +23,7 @@ export class UpdateClienteDto {
 
   @IsOptional()
   @IsDate()
-  fecha_nacimiento?: Date;
+  fecha_nacimiento?: string;
 
   @IsOptional()
   @IsBoolean()

@@ -1,42 +1,111 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable,NotFoundException,BadRequestException,InternalServerErrorException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DetalleFactura } from './detalle_factura.entity';
 import { CreateDetalleFacturaDto } from './dto/create-detalle_factura.dto';
 import { UpdateDetalleFacturaDto } from './dto/update-detalle_factura.dto';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { QueryDto } from 'src/common/dto/query.dto';
+import { Factura } from 'src/facturas/factura.entity';
 
 @Injectable()
 export class DetallesFacturaService {
+  
   constructor(
     @InjectRepository(DetalleFactura)
-    private readonly detallefacturaRepository: Repository<DetalleFactura>,
+    private readonly detalleRepo: Repository<DetalleFactura>,
+    @InjectRepository(Factura)
+        private readonly facturaRepo: Repository<Factura>,
   ) {}
-  
-  async findAll(options: IPaginationOptions): Promise<Pagination<DetalleFactura>> {
-    const queryBuilder = this.detallefacturaRepository.createQueryBuilder('detallefactura');
-    return paginate<DetalleFactura>(queryBuilder, options);
+
+  private handleDbError(error: any, msg: string): never {
+    if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      throw error;
+    }
+    throw new InternalServerErrorException(msg);
   }
-  create(createDetalleFacturaDto: CreateDetalleFacturaDto) {
-    const detallefactura = this.detallefacturaRepository.create(createDetalleFacturaDto);
-    return this.detallefacturaRepository.save(detallefactura);
+
+  async findAll(queryDto: QueryDto): Promise<Pagination<DetalleFactura>> {
+    try {
+      const { page, limit, search } = queryDto;
+
+      const qb = this.detalleRepo
+        .createQueryBuilder('detalle')
+        .leftJoinAndSelect('detalle.factura', 'factura');
+
+      if (search) {
+        qb.andWhere(
+          `(
+            detalle.id_detalle::text ILIKE :search
+            OR detalle.descripcion ILIKE :search
+            OR factura.id_factura::text ILIKE :search
+          )`,
+          { search: `%${search}%` },
+        );
+      }
+
+      return await paginate<DetalleFactura>(qb, { page, limit });
+    } catch (error) {
+      throw this.handleDbError(error, 'Error al listar detalles de factura');
+    }
+  }
+
+  async create(dto: CreateDetalleFacturaDto) {
+    const factura = await this.facturaRepo.findOne({
+      where: { id_factura: dto.id_factura },
+    });
+
+    if (!factura) {
+      throw new NotFoundException('Factura no encontrada');
+    }
+
+    const detalle = this.detalleRepo.create({
+      descripcion: dto.descripcion,
+      cantidad: dto.cantidad,
+      precio_unitario: dto.precio_unitario,
+      total: dto.cantidad * dto.precio_unitario,
+      factura: factura,
+    });
+
+    return this.detalleRepo.save(detalle);
   }
 
 
-  findOne(id_detalle: string) {
-    return this.detallefacturaRepository.findOne({ where: { id_detalle} });
+
+  async findOne(id_detalle: string) {
+    try {
+      const detalle = await this.detalleRepo.findOne({
+        where: { id_detalle },
+        relations: ['factura'],
+      });
+      if (!detalle) throw new NotFoundException('Detalle no encontrado');
+      return detalle;
+    } catch (error) {
+      throw this.handleDbError(error, 'Error al obtener detalle de factura');
+    }
   }
 
-  async update(id_detalle: string, updateDetalleFacturaDto: UpdateDetalleFacturaDto) {
-    const detallefactura = await this.detallefacturaRepository.findOne({ where: { id_detalle } });
-    if (!detallefactura) return null;
-    Object.assign(detallefactura, updateDetalleFacturaDto);
-    return this.detallefacturaRepository.save(detallefactura);
+  async update(id_detalle: string, dto: UpdateDetalleFacturaDto) {
+    try {
+      const detalle = await this.detalleRepo.findOne({ where: { id_detalle } });
+      if (!detalle) throw new NotFoundException('Detalle no encontrado');
+
+      Object.assign(detalle, dto);
+      return await this.detalleRepo.save(detalle);
+    } catch (error) {
+      throw this.handleDbError(error, 'Error al actualizar detalle de factura');
+    }
   }
 
   async remove(id_detalle: string) {
-    const detallefactura = await this.detallefacturaRepository.findOne({ where: { id_detalle }});
-    if (!detallefactura) return null;
-    return this.detallefacturaRepository.remove(detallefactura);
+    try {
+      const detalle = await this.detalleRepo.findOne({ where: { id_detalle } });
+      if (!detalle) throw new NotFoundException('Detalle no encontrado');
+
+      await this.detalleRepo.remove(detalle);
+      return { message: 'Detalle eliminado' };
+    } catch (error) {
+      throw this.handleDbError(error, 'Error al eliminar detalle de factura');
+    }
   }
 }
