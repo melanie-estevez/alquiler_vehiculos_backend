@@ -1,26 +1,38 @@
-import { IsString, IsNumber, IsUUID, IsEnum, IsOptional, IsInt } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsOptional,
+  IsUUID,
+  IsEnum,
+  IsNumber,
+} from 'class-validator';
 import { EstadoVehiculo } from '../enums/estado-vehiculo.enum';
 
 export class UpdateVehiculoDto {
+  @IsOptional()
   @IsString()
-  marca: string;
+  marca?: string;
 
+  @IsOptional()
   @IsString()
-  modelo: string;
+  modelo?: string;
 
+  @IsOptional()
   @IsInt()
-  anio: number;
-
-  @IsString()
-  placa: string;
+  anio?: number;
 
   @IsNumber()
   precio_diario: number;
 
-  @IsEnum(EstadoVehiculo)
   @IsOptional()
+  @IsString()
+  placa?: string;
+
+  @IsOptional()
+  @IsEnum(EstadoVehiculo)
   estado?: EstadoVehiculo;
 
-  @IsUUID()
-  id_sucursal: string;
+
+  @IsOptional()
+  id_sucursal?: string | null;
 }
