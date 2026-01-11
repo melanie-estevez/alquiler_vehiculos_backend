@@ -18,6 +18,8 @@ import { DetallesFacturaModule } from './detalle_factura/detalle_factura.module'
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 import { MailController } from './mail/mail.controller';
+import { HistorialModule } from './historial_reservas/historial.module';
+import { Historial_usuarioModule } from './historial_usuario/historial_usuario.module';
 
 
 
@@ -49,6 +51,8 @@ import { MailController } from './mail/mail.controller';
     ClientesModule,
     FacturasModule, 
     DetallesFacturaModule, 
+    HistorialModule,
+    Historial_usuarioModule,
     MailModule
   ],
   controllers: [AppController, MailController],

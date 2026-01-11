@@ -15,12 +15,13 @@ export class Historial_usuarioService {
   async create(dto: CreateHistorial_usuarioDto): Promise<Historial_usuario> {
     try {
       const historial = new this.historialModel({
+        id_reserva: dto.id_reserva,
         id_usuario: dto.id_usuario,
         accion: dto.accion,
         fecha: new Date(dto.fecha), 
       });
 
-      return await historial.save();
+      return (await historial.save()).toObject();
     } catch (err) {
       console.error('Error creando historial_usuario:', err);
       throw new InternalServerErrorException('Error al crear el historial_usuario');
@@ -51,13 +52,12 @@ export class Historial_usuarioService {
 
       const total = await this.historialModel.countDocuments(filter);
 
-      const items = await this.historialModel
+      const items = (await this.historialModel
         .find(filter)
         .sort({ fecha: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
-        .exec();
-
+        ).map(doc => doc.toObject());
       return { items, total, page, limit };
     } catch (err) {
       console.error('Error retrieving historial_usuario:', err);
@@ -67,44 +67,52 @@ export class Historial_usuarioService {
 
   async findByReserva(id_reserva: string): Promise<Historial_usuario[]> {
     try {
-      return await this.historialModel.find({ id_reserva }).sort({ fecha: -1 }).exec();
+      return (await this.historialModel
+        .find({ id_reserva })
+        .sort({ fecha: -1 })
+        .exec()
+      ).map(doc => doc.toObject());
     } catch (err) {
       console.error('Error findByReserva:', err);
-      throw new InternalServerErrorException('Error al buscar historial por reserva');
+        throw new InternalServerErrorException('Error al buscar historial por reserva');
+      }
     }
-  }
-
   async findOne(id: string): Promise<Historial_usuario> {
-    const historial = await this.historialModel.findById(id).exec();
-    if (!historial) throw new NotFoundException('Historial_usuario no encontrado');
-    return historial;
+     const doc = await this.historialModel.findById(id);
+     if (!doc) {
+      throw new NotFoundException('Historial_usuario no encontrado');
+    }
+  return doc.toObject();
   }
 
   async update(id: string, dto: UpdateHistorial_usuarioDto): Promise<Historial_usuario> {
-    try {
-      const updateData: any = { ...dto };
+  try {
+    const updateData: any = { ...dto };
 
-      if (dto.fecha) updateData.fecha = new Date(dto.fecha);
+    if (dto.fecha) updateData.fecha = new Date(dto.fecha);
 
-      const historial = await this.historialModel
-        .findByIdAndUpdate(id, { $set: updateData }, { new: true })
-        .exec();
+    const historial = await this.historialModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    );
 
-      if (!historial) throw new NotFoundException('Historial_usuario no encontrado');
-      return historial;
-    } catch (err) {
-      console.error('Error updating historial_usuario:', err);
-      throw new InternalServerErrorException('Error al actualizar historial_usuario');
+    if (!historial) {
+      throw new NotFoundException('Historial_usuario no encontrado');
     }
-  }
 
-  async remove(id: string): Promise<void> {
-    try {
-      const deleted = await this.historialModel.findByIdAndDelete(id).exec();
-      if (!deleted) throw new NotFoundException('Historial_usuario no encontrado');
-    } catch (err) {
-      console.error('Error deleting historial_usuario:', err);
-      throw new InternalServerErrorException('Error al eliminar historial_usuario');
-    }
+    return historial.toObject();
+  } catch (err) {
+    console.error('Error updating:', err);
+    throw new InternalServerErrorException('Error al actualizar historial_usuario');
   }
+}
+
+   async remove(id: string) {
+      const deleted = await this.historialModel.findByIdAndDelete(id);
+      if (!deleted) {
+        throw new NotFoundException('Historial no encontrado');
+      }
+    return { deleted: true };
+   }
 }

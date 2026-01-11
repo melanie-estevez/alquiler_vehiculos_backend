@@ -6,9 +6,6 @@ import { CreateHistorialDto } from './dto/create-historial.dto';
 import { UpdateHistorialDto } from './dto/update-historial.dto';
     @Injectable()
     export class HistorialService {
-      remove(id: string) {
-        throw new Error('Method not implemented.');
-      }
       constructor(
         @InjectModel(Historial.name)
         private readonly historialModel: Model<Historial>,
@@ -21,7 +18,7 @@ import { UpdateHistorialDto } from './dto/update-historial.dto';
           estado_nuevo: createHistorialDto.estado_nuevo,
           fecha: new Date(createHistorialDto.fecha),
         });
-        return await historial.save();
+        return (await historial.save()).toObject();
         } catch (error){
           console.error(error);
           throw new InternalServerErrorException('Error al crear historial de reserva')
@@ -44,12 +41,12 @@ import { UpdateHistorialDto } from './dto/update-historial.dto';
       }
     }
       const total = await this.historialModel.countDocuments(filter);
-      const items = await this.historialModel
+      const items = (await this.historialModel
         .find(filter)
         .sort({ fecha: -1 })
         .skip((page - 1) * limit)
         .limit(limit)
-        .exec();
+        ).map(doc => doc.toObject());
       return {items,total,page,limit,};
     } catch (error) {
       console.error(error);
@@ -67,7 +64,8 @@ import { UpdateHistorialDto } from './dto/update-historial.dto';
       }
     }
       async findOne(id: string): Promise<Historial | null> {
-        return this.historialModel.findById(id).exec();
+        const doc = await this.historialModel.findById(id);
+        return doc ? doc.toObject() : null;
       }
       async update(id: string, dto: UpdateHistorialDto): Promise<Historial> {
       try {
@@ -75,12 +73,16 @@ import { UpdateHistorialDto } from './dto/update-historial.dto';
       if (!historial) {
           throw new NotFoundException('Historial no encontrado');
      }
-     return historial;
+     return historial.toObject();
       } catch (error) {
       throw new InternalServerErrorException('Error al actualizar el historial')
       }
     }
-      async delete(id: string): Promise<Historial | null> {
-        return this.historialModel.findByIdAndDelete(id).exec();
+      async remove(id: string) {
+        const deleted = await this.historialModel.findByIdAndDelete(id);
+      if (!deleted) {
+        throw new NotFoundException('Historial no encontrado');
       }
-    }
+    return deleted.toObject();
+   }
+  }

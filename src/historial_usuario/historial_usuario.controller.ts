@@ -1,5 +1,4 @@
-import {Controller,Get,Post,Put,Delete,Param,Body,Query,NotFoundException,InternalServerErrorException,
-} from '@nestjs/common';
+import {Controller,Get,Post,Put,Delete,Param,Body,Query,NotFoundException,InternalServerErrorException,} from '@nestjs/common';
 import { Historial_usuarioService } from './historial_usuario.service';
 import { CreateHistorial_usuarioDto } from './dto/create-historial_usuario.dto';
 import { UpdateHistorial_usuarioDto } from './dto/update-historial_usuario.dto';
@@ -21,8 +20,8 @@ export class Historial_usuarioController {
     @Query('page') page = '1',
     @Query('limit') limit = '10',
     @Query('search') search?: string,
-    @Query('searchField') searchField?: 'id_usuario' | 'id_reserva' | 'accion',
-  ) {
+    @Query('searchField') searchField?: 'id_usuario' | 'id_reserva' | 'accion',) 
+  {
     return this.historial_usuarioService.findAll({
       page: Number(page),
       limit: Number(limit),
@@ -40,8 +39,10 @@ export class Historial_usuarioController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const historial = await this.historial_usuarioService.findOne(id);
-    if (!historial) throw new NotFoundException('Historial no encontrado');
-    return new SuccessResponseDto('Historial obtenido', historial);
+  if (!historial) {
+    throw new NotFoundException('Historial_usuario no encontrado');
+  }
+  return new SuccessResponseDto('Historial obtenido correctamente',historial);
   }
 
   @Put(':id')
