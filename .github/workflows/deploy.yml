@@ -2,7 +2,7 @@ name: 🚀 Deploy Alquiler Vehículos Backend to VPS
 
 on:
   push:
-    branches: [develop]
+    branches: [mainn]
 
 jobs:
   deploy:
