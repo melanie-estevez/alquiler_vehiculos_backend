@@ -11,9 +11,6 @@ import { QueryDto } from 'src/common/dto/query.dto';
 
 @Injectable()
 export class UsersService {
-  updateProfile(id: string, filename: string) {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -38,7 +35,7 @@ export class UsersService {
     throw new InternalServerErrorException(fallbackMsg);
   }
 
- async findAll(queryDto: QueryDto, p0: boolean): Promise<Pagination<User>> {
+ async findAll(queryDto: QueryDto): Promise<Pagination<User>> {
     try {
       const { page, limit, search, searchField, sort, order } = queryDto;
       const qb = this.userRepository.createQueryBuilder('user');
