@@ -2,13 +2,10 @@ name: 🚀 Deploy Alquiler Vehículos Backend to VPS
 
 on:
   push:
-<<<<<<< HEAD
     branches:
       - estevez_melanie
   workflow_dispatch:
-=======
     branches: [main]
->>>>>>> main
 
 jobs:
   deploy:
