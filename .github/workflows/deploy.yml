@@ -1,18 +1,19 @@
-name: 🚀 Deploy Alquiler Vehículos Backend to VPS
+name: 🚀 Deploy Backend
 
 on:
   push:
-    branches: [mainn]
+    branches:
+      - main
 
 jobs:
-  deploy:
+  deploy-prod:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout del código
+        uses: actions/checkout@v4
 
-      - name: Copy project to VPS
+      - name: Copiar proyecto al VPS (producción)
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -21,7 +22,7 @@ jobs:
           source: "."
           target: "/opt/alquiler-vehiculos-backend"
 
-      - name: Run deploy commands on VPS
+      - name: Desplegar y reiniciar con PM2 (producción)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -31,13 +32,11 @@ jobs:
             set -e
             cd /opt/alquiler-vehiculos-backend
 
-            printf "%s" "${{ secrets.ENV_FILE }}" > .env
+            printf "%s" "${{ secrets.ENV_FILE_PROD }}" > .env
 
-            npm install
+            npm ci || npm install
             npm run build
 
-            pm2 stop alquiler-vehiculos-backend || true
             pm2 delete alquiler-vehiculos-backend || true
             pm2 start dist/main.js --name alquiler-vehiculos-backend
             pm2 save
-
