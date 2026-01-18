@@ -2,7 +2,13 @@ name: 🚀 Deploy Alquiler Vehículos Backend to VPS
 
 on:
   push:
-    branches: [mainn]
+<<<<<<< HEAD
+    branches:
+      - estevez_melanie
+  workflow_dispatch:
+=======
+    branches: [main]
+>>>>>>> main
 
 jobs:
   deploy:
@@ -10,13 +16,21 @@ jobs:
 
     steps:
       - name: Checkout code
+<<<<<<< HEAD
+        uses: actions/checkout@v4
+=======
         uses: actions/checkout@v3
+>>>>>>> main
 
       - name: Copy project to VPS
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.VPS_HOST }}
+<<<<<<< HEAD
+          username: ${{ secrets.VPS_USER }}
+=======
           username: root
+>>>>>>> main
           key: ${{ secrets.VPS_KEY }}
           source: "."
           target: "/opt/alquiler-vehiculos-backend"
@@ -25,12 +39,29 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
+<<<<<<< HEAD
+          username: ${{ secrets.VPS_USER }}
+=======
           username: root
+>>>>>>> main
           key: ${{ secrets.VPS_KEY }}
           script: |
             set -e
             cd /opt/alquiler-vehiculos-backend
 
+<<<<<<< HEAD
+            # Crear .env desde GitHub Secrets (multilínea seguro)
+            cat > .env << 'EOF'
+            ${{ secrets.ENV_FILE }}
+            EOF
+
+            npm ci || npm install
+            npm run build
+
+            pm2 delete alquiler-vehiculos-backend || true
+            pm2 start dist/main.js --name alquiler-vehiculos-backend
+            pm2 save
+=======
             printf "%s" "${{ secrets.ENV_FILE }}" > .env
 
             npm install
@@ -41,3 +72,4 @@ jobs:
             pm2 start dist/main.js --name alquiler-vehiculos-backend
             pm2 save
 
+>>>>>>> main
