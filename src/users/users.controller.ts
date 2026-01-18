@@ -12,10 +12,14 @@ import { SuccessResponseDto } from 'src/common/dto/response.dto';
 
 @Controller('users')
 export class UsersController {
+  uploadProfile(arg0: string, fileMock: Express.Multer.File) {
+    throw new Error('Method not implemented.');
+  }
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll(@Query() queryDto: QueryDto) {
+  async findAll(@Query()
+queryDto: QueryDto, p0: string) {
     queryDto.limit = queryDto.limit > 100 ? 100 : queryDto.limit;
 
     const result = await this.usersService.findAll(queryDto);
