@@ -106,7 +106,7 @@ describe('UsersService', () => {
       expect(result.email).toBe('a@test.com');
     });
 
-    it('si el email está duplicado (23505), devuelve BadRequestException', async () => {
+    it('si el email está duplicado, devuelve BadRequestException', async () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-123');
 
       userRepoMock.create.mockReturnValue({} as any);

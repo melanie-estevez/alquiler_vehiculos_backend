@@ -2,6 +2,9 @@ import { Expose } from 'class-transformer';
 import { Role } from 'src/auth/enums/role.enum';
 
 export class UserSerializer {
+  username(username: any) {
+    throw new Error('Method not implemented.');
+  }
   @Expose()
   id: string;
 

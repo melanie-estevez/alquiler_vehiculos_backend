@@ -19,6 +19,10 @@ export class User {
     default: Role.USER,
   })
   role: Role;
+  
+  @Column({ default: true })
+  isActive: boolean;
+
 
   @OneToOne(() => Cliente, (cliente) => cliente.user, { nullable: true })
   cliente?: Cliente;

@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AlquilerController } from './alquiler.controller';
-import { AlquilerService } from './alquiler.service';
+import { PagosController } from './pagos.controller';
+import { PagosService } from './pagos.service';
 
-describe('AlquilerController', () => {
-  let controller: AlquilerController;
-  let service: AlquilerService;
+describe('PagosController', () => {
+  let controller: PagosController;
+  let service: PagosService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AlquilerController],
+      controllers: [PagosController],
       providers: [
         {
-          provide: AlquilerService,
+          provide: PagosService,
           useValue: {
             create: jest.fn(),
           },
@@ -19,8 +19,8 @@ describe('AlquilerController', () => {
       ],
     }).compile();
 
-    controller = module.get<AlquilerController>(AlquilerController);
-    service = module.get<AlquilerService>(AlquilerService);
+    controller = module.get<PagosController>(PagosController);
+    service = module.get<PagosService>(PagosService);
   });
 
   it('Debe ser definido', () => {
