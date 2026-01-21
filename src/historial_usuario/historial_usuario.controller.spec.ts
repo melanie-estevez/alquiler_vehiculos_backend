@@ -23,11 +23,11 @@ describe('Historial_usuarioController', () => {
     service = module.get<Historial_usuarioService>(Historial_usuarioService);
   });
 
-  it('should be defined', () => {
+  it('Debe ser definido', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should call service.create', async () => {
+  it('Debería de llamar a service.create', async () => {
     const dto = {
       id_reserva: 'res-1',
       id_usuario: 'usr-1',

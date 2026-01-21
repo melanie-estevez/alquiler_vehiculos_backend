@@ -23,11 +23,11 @@ describe('PagosController', () => {
     service = module.get<PagosService>(PagosService);
   });
 
-  it('should be defined', () => {
+  it('Debe ser definido', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should call service.create', async () => {
+  it('Debería de llamar a service.create', async () => {
     const dto = { /* datos fake */ };
     await controller.create(dto as any);
 
