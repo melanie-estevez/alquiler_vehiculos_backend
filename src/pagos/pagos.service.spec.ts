@@ -30,11 +30,11 @@ describe('PagosService', () => {
     );
   });
 
-  it('should be defined', () => {
+  it('Debe ser definido', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return pagos', async () => {
+  it('Debe retornar pagos', async () => {
     const pagoFake = [{ id: 1 }];
 
     jest.spyOn(repository, 'find').mockResolvedValue(pagoFake as any);
