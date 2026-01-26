@@ -11,7 +11,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173', 
       'http://localhost:3000', 
-      'https://higuera-posts-ui.desarrollo-software.xyz',
+      'http://estevez-alquiler-vehiculos-api',
 
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
