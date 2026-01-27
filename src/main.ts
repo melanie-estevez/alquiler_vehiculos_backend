@@ -11,7 +11,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173', 
       'http://localhost:3000', 
-      'http://estevez-alquiler-vehiculos-api',
+      'http://estevez-alquiler-vehiculos-api.desarrollo-software.xyz',
 
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
