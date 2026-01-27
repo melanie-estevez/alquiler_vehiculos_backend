@@ -11,6 +11,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173', 
       'http://localhost:3000', 
+      'https://lumi.desarrollo-software.xyz',
       'https://estevez-alquiler-vehiculos-api.desarrollo-software.xyz',
 
     ],
