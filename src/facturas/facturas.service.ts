@@ -1,4 +1,9 @@
-import {Injectable,NotFoundException,BadRequestException,InternalServerErrorException} from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Factura } from './factura.entity';
@@ -16,16 +21,22 @@ export class FacturasService {
   constructor(
     @InjectRepository(Factura)
     private readonly facturaRepo: Repository<Factura>,
+
     @InjectRepository(DetalleFactura)
     private readonly detalleRepo: Repository<DetalleFactura>,
+
     @InjectRepository(Reservas)
     private readonly reservaRepo: Repository<Reservas>,
+
     @InjectRepository(Cliente)
     private readonly clienteRepo: Repository<Cliente>,
   ) {}
 
   private handleDbError(error: any, msg: string): never {
-    if (error instanceof NotFoundException || error instanceof BadRequestException) {
+    if (
+      error instanceof NotFoundException ||
+      error instanceof BadRequestException
+    ) {
       throw error;
     }
     throw new InternalServerErrorException(msg);
@@ -102,6 +113,72 @@ export class FacturasService {
       return await this.facturaRepo.save(factura);
     } catch (error) {
       throw this.handleDbError(error, 'Error al crear factura');
+    }
+  }
+
+  async getOrCreateByReserva(
+    reservaId: string,
+    userId: string,
+  ): Promise<Factura> {
+    try {
+      
+      const reserva = await this.reservaRepo.findOne({
+        where: { id_reserva: reservaId },
+      });
+
+      if (!reserva) {
+        throw new NotFoundException('Reserva no existe');
+      }
+
+     
+      const cliente = await this.clienteRepo.findOne({
+        where: { user: { id: userId } },
+      });
+
+      if (!cliente) {
+        throw new BadRequestException(
+          'Debe completar su perfil de cliente antes de facturar',
+        );
+      }
+
+      
+      let factura = await this.facturaRepo.findOne({
+        where: { reserva: { id_reserva: reservaId } },
+        relations: ['detalles', 'cliente', 'reserva'],
+      });
+
+      if (factura) {
+        return factura; 
+      }
+
+    
+      const subtotal = reserva.total;
+      const iva = subtotal * 0.15;
+      const total = subtotal + iva;
+
+      const detalle = this.detalleRepo.create({
+        descripcion: `Reserva ${reserva.id_reserva}`,
+        cantidad: 1,
+        precio_unitario: subtotal,
+        total: subtotal,
+      });
+
+      factura = this.facturaRepo.create({
+        reserva,
+        cliente,
+        subtotal,
+        iva,
+        total,
+        estado: EstadoFactura.PENDIENTE,
+        detalles: [detalle],
+      });
+
+      return await this.facturaRepo.save(factura);
+    } catch (error) {
+      throw this.handleDbError(
+        error,
+        'Error al obtener o crear factura por reserva',
+      );
     }
   }
 

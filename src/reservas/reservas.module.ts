@@ -5,13 +5,12 @@ import { ReservaService } from './reservas.service';
 import { ReservaController } from './reservas.controller';
 import { Reservas } from './reservas.entity';
 import { Vehiculo } from '../vehiculos/vehiculos.entity';
+import { ClientesModule } from 'src/clientes/clientes.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Reservas,
-      Vehiculo, 
-    ]),
+    TypeOrmModule.forFeature([Reservas, Vehiculo]),
+    ClientesModule,
   ],
   controllers: [ReservaController],
   providers: [ReservaService],

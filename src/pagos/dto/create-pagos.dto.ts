@@ -1,14 +1,12 @@
-import { IsString, IsNumber, IsDateString, IsUUID } from 'class-validator';
+import { IsString, IsDateString, IsUUID, IsOptional } from 'class-validator';
 
 export class CreatePagosDto {
   @IsUUID()
   id_factura: string;
 
+  @IsOptional()
   @IsUUID()
-  id_reserva: string;
-
-  @IsNumber()
-  monto: number;
+  id_reserva?: string;
 
   @IsString()
   metodo: string;
