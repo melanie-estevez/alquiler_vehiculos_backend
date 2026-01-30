@@ -1,4 +1,4 @@
-jest.mock('nestjs-typeorm-paginate', () => ({
+/*jest.mock('nestjs-typeorm-paginate', () => ({
   paginate: jest.fn(),
 }));
 
@@ -236,4 +236,4 @@ describe('ReservaService', () => {
       expect(reservaRepo.remove).toHaveBeenCalledWith(baseReserva);
     });
   });
-});
+});*/

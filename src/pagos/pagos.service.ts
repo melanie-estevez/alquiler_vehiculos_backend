@@ -11,11 +11,11 @@ import { Pago } from './pagos.entity';
 import { CreatePagosDto } from './dto/create-pagos.dto';
 import { UpdatePagosDto } from './dto/update-pagos.dto';
 
-import { Factura } from '../facturas/factura.entity';
-import { Reservas } from '../reservas/reservas.entity';
+import { Factura } from 'src/facturas/factura.entity';
+import { Reservas } from 'src/reservas/reservas.entity';
 
-import { EstadoFactura } from '../facturas/enums/estado-factura.enum';
-import { EstadoReserva } from '../reservas/enums/estado-reserva.enum';
+import { EstadoFactura } from 'src/facturas/enums/estado-factura.enum';
+import { EstadoReserva } from 'src/reservas/enums/estado-reserva.enum';
 
 @Injectable()
 export class PagosService {
@@ -31,10 +31,7 @@ export class PagosService {
   ) {}
 
   private handleDbError(error: any, msg: string): never {
-    if (
-      error instanceof NotFoundException ||
-      error instanceof BadRequestException
-    ) {
+    if (error instanceof NotFoundException || error instanceof BadRequestException) {
       throw error;
     }
     throw new InternalServerErrorException(msg);
@@ -44,9 +41,7 @@ export class PagosService {
     try {
       const id_factura = (createPagosDto as any).id_factura as string;
 
-      if (!id_factura) {
-        throw new BadRequestException('Falta id_factura');
-      }
+      if (!id_factura) throw new BadRequestException('Falta id_factura');
 
       const factura = await this.facturaRepo.findOne({
         where: { id_factura },
@@ -68,16 +63,13 @@ export class PagosService {
       }
 
       const pago = this.pagosRepository.create(createPagosDto);
-
       pago.factura = factura;
       pago.reserva = factura.reserva;
-      pago.monto = factura.total;
+      pago.monto = Number(factura.total);
 
       const pagoGuardado = await this.pagosRepository.save(pago);
 
-      await this.facturaRepo.update(id_factura, {
-        estado: EstadoFactura.PAGADO,
-      });
+      await this.facturaRepo.update(id_factura, { estado: EstadoFactura.PAGADO });
 
       if (factura.reserva?.id_reserva) {
         await this.reservaRepo.update(factura.reserva.id_reserva, {
