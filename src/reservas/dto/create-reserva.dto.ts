@@ -1,12 +1,6 @@
-import { IsUUID, IsDateString, IsEnum, IsNumber, Min, IsString } from 'class-validator';
-import { EstadoReserva } from '../enums/estado-reserva.enum';
+import { IsUUID, IsDateString, IsNumber, Min, IsOptional } from 'class-validator';
 
 export class CreateReservaDto {
-
-
-  @IsUUID()
-  id_cliente: string;
-
   @IsUUID()
   id_vehiculo: string;
 
@@ -20,8 +14,7 @@ export class CreateReservaDto {
   @IsDateString()
   fecha_fin: Date;
 
-  @IsEnum(EstadoReserva)
-  estado?: EstadoReserva; 
-
-  
+  @IsOptional()
+  @IsUUID()
+  id_cliente?: string;
 }

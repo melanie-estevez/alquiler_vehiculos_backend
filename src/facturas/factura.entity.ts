@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Reservas } from '../reservas/reservas.entity';
 import { Cliente } from '../clientes/cliente.entity';
 import { DetalleFactura } from '../detalle_factura/detalle_factura.entity';
@@ -14,22 +21,21 @@ export class Factura {
   fecha_emision: Date;
 
   @Column({
-  type: 'enum',
-  enum: EstadoFactura,
-  default: EstadoFactura.PENDIENTE,
+    type: 'enum',
+    enum: EstadoFactura,
+    default: EstadoFactura.PENDIENTE,
   })
   estado: EstadoFactura;
 
-  @ManyToOne(() => Cliente, cliente => cliente.facturas)
+  @ManyToOne(() => Cliente, (cliente) => cliente.facturas, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_cliente' })
   cliente: Cliente;
 
-  @ManyToOne(() => Reservas, reserva => reserva.facturas)
+  @ManyToOne(() => Reservas, (reserva) => reserva.facturas, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_reserva' })
   reserva: Reservas;
 
-
-  @OneToMany(() => DetalleFactura, detalle => detalle.factura, { cascade: true })
+  @OneToMany(() => DetalleFactura, (detalle) => detalle.factura, { cascade: true })
   detalles: DetalleFactura[];
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
@@ -40,7 +46,7 @@ export class Factura {
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   total: number;
-  
-  @OneToMany(() => Pago, pago => pago.factura, { cascade: true })
+
+  @OneToMany(() => Pago, (pago) => pago.factura, { cascade: true })
   pagos: Pago[];
 }

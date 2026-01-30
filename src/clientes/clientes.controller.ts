@@ -1,4 +1,15 @@
-import {Controller,Get,Post,Body,Param,Put,Delete,Req,UseGuards,Query} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  Req,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -25,15 +36,15 @@ export class ClientesController {
   @UseGuards(JwtAuthGuard)
   @Post('me')
   async createMe(@Req() req: any, @Body() dto: CreateClienteDto) {
-    const cliente = await this.clientesService.createForUser(req.user.sub, dto);
+    const cliente = await this.clientesService.upsertMe(req.user.sub, dto);
 
-    return new SuccessResponseDto('Cliente creado correctamente', cliente);
+    return new SuccessResponseDto('Cliente guardado correctamente', cliente);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async me(@Req() req: any) {
-    const cliente = await this.clientesService.findByUserId(req.user.sub);
+    const cliente = await this.clientesService.getMe(req.user.sub);
 
     return new SuccessResponseDto('Cliente encontrado', cliente);
   }
@@ -51,7 +62,7 @@ export class ClientesController {
 
     return new SuccessResponseDto('Cliente actualizado correctamente', cliente);
   }
-  
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Delete(':id')

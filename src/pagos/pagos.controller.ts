@@ -1,4 +1,12 @@
-import { Controller, Post as HttpPost, Body, Get, Param, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { PagosService } from './pagos.service';
 import { CreatePagosDto } from './dto/create-pagos.dto';
 import { UpdatePagosDto } from './dto/update-pagos.dto';
@@ -7,7 +15,7 @@ import { UpdatePagosDto } from './dto/update-pagos.dto';
 export class PagosController {
   constructor(private readonly pagosService: PagosService) {}
 
-  @HttpPost()
+  @Post()
   create(@Body() createPagosDto: CreatePagosDto) {
     return this.pagosService.create(createPagosDto);
   }
