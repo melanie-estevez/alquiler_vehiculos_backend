@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PagosService } from './pagos.service';
 import { PagosController } from './pagos.controller';
+import { PagosService } from './pagos.service';
 import { Pago } from './pagos.entity';
-import { Alquiler } from '../alquileres/alquiler.entity';
+import { Factura } from 'src/facturas/factura.entity';
+import { Reservas } from 'src/reservas/reservas.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pago, Alquiler])],
+  imports: [TypeOrmModule.forFeature([Pago, Factura, Reservas])],
   controllers: [PagosController],
   providers: [PagosService],
+  exports: [PagosService],
 })
 export class PagosModule {}
