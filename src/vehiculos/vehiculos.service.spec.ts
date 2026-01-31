@@ -7,7 +7,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 import { VehiculoService } from './vehiculos.service';
-import { Vehiculo } from './vehiculos.entity';
+import { Vehiculos } from './vehiculos.entity';
 import { Sucursales } from '../sucursales/sucursales.entity';
 import { QueryDto } from 'src/common/dto/query.dto';
 
@@ -37,7 +37,7 @@ describe('VehiculoService', () => {
     nombre: 'Sucursal Centro',
   } as any;
 
-  const baseVehiculo: Vehiculo = {
+  const baseVehiculo: Vehiculos = {
     id_vehiculo: 'veh-1',
     marca: 'Toyota',
     modelo: 'Corolla',
@@ -72,7 +72,7 @@ describe('VehiculoService', () => {
       providers: [
         VehiculoService,
         {
-          provide: getRepositoryToken(Vehiculo),
+          provide: getRepositoryToken(Vehiculos),
           useValue: vehiculoRepo,
         },
         {
@@ -161,7 +161,7 @@ describe('VehiculoService', () => {
         order: 'ASC',
       };
 
-      const paginated: Pagination<Vehiculo> = {
+      const paginated: Pagination<Vehiculos> = {
         items: [baseVehiculo],
         meta: {
           totalItems: 1,
