@@ -6,17 +6,22 @@ import {
   Param,
   Put,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { PagosService } from './pagos.service';
 import { CreatePagosDto } from './dto/create-pagos.dto';
 import { UpdatePagosDto } from './dto/update-pagos.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('pagos')
+@UseGuards(JwtAuthGuard)
 export class PagosController {
   constructor(private readonly pagosService: PagosService) {}
 
   @Post()
-  create(@Body() createPagosDto: CreatePagosDto) {
+  create(@Body() createPagosDto: CreatePagosDto, @Req() req: any) {
+    // req.user disponible si luego quieres validar dueño de la factura
     return this.pagosService.create(createPagosDto);
   }
 
