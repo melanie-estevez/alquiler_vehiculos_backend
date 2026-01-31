@@ -9,6 +9,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { FacturasService } from './facturas.service';
 import { CreateFacturaDto } from './dto/create-factura.dto';
@@ -29,8 +30,9 @@ export class FacturasController {
 
   @UseGuards(JwtAuthGuard)
   @Get('reserva/:id')
-  async getByReserva(@Param('id') id: string, @Req() req: any) {
-    const factura = await this.service.getOrCreateByReserva(id, req.user.sub);
+  async getByReserva(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: any) {
+    const userId = String(req.user?.sub ?? req.user?.id ?? req.user?.userId ?? '');
+    const factura = await this.service.getOrCreateByReserva(id, userId);
     return new SuccessResponseDto('Factura encontrada', factura);
   }
 
@@ -42,19 +44,19 @@ export class FacturasController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const factura = await this.service.findOne(id);
     return new SuccessResponseDto('Factura encontrada', factura);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateFacturaDto) {
+  async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() dto: UpdateFacturaDto) {
     const factura = await this.service.update(id, dto);
     return new SuccessResponseDto('Factura actualizada correctamente', factura);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     const result = await this.service.remove(id);
     return new SuccessResponseDto('Factura eliminada correctamente', result);
   }

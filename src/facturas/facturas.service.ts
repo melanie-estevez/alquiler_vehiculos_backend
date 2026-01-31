@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -35,10 +36,12 @@ export class FacturasService {
   private handleDbError(error: any, msg: string): never {
     if (
       error instanceof NotFoundException ||
-      error instanceof BadRequestException
+      error instanceof BadRequestException ||
+      error instanceof ForbiddenException
     ) {
       throw error;
     }
+    console.error(error);
     throw new InternalServerErrorException(msg);
   }
 
@@ -67,7 +70,7 @@ export class FacturasService {
         );
       }
 
-      return await paginate(qb, { page, limit });
+      return await paginate(qb, { page, limit: limit > 100 ? 100 : limit });
     } catch (error) {
       throw this.handleDbError(error, 'Error al listar facturas');
     }
@@ -77,6 +80,7 @@ export class FacturasService {
     try {
       const reserva = await this.reservaRepo.findOne({
         where: { id_reserva: dto.id_reserva },
+        relations: ['cliente'],
       });
       if (!reserva) throw new NotFoundException('Reserva no existe');
 
@@ -88,7 +92,7 @@ export class FacturasService {
       let subtotal = 0;
 
       const detalles = (dto.detalles ?? []).map((d) => {
-        const total = d.cantidad * d.precio_unitario;
+        const total = Number(d.cantidad) * Number(d.precio_unitario);
         subtotal += total;
         return this.detalleRepo.create({ ...d, total });
       });
@@ -97,8 +101,8 @@ export class FacturasService {
         throw new BadRequestException('La factura debe tener detalles');
       }
 
-      const iva = subtotal * 0.15;
-      const total = subtotal + iva;
+      const iva = Number((subtotal * 0.15).toFixed(2));
+      const total = Number((subtotal + iva).toFixed(2));
 
       const factura = this.facturaRepo.create({
         reserva,
@@ -116,45 +120,47 @@ export class FacturasService {
     }
   }
 
-  async getOrCreateByReserva(
-    reservaId: string,
-    userId: string,
-  ): Promise<Factura> {
+  async getOrCreateByReserva(reservaId: string, userId: string): Promise<Factura> {
     try {
-      
       const reserva = await this.reservaRepo.findOne({
         where: { id_reserva: reservaId },
+        relations: ['cliente', 'vehiculo'],
       });
 
-      if (!reserva) {
-        throw new NotFoundException('Reserva no existe');
-      }
+      if (!reserva) throw new NotFoundException('Reserva no existe');
 
-     
-      const cliente = await this.clienteRepo.findOne({
-        where: { user: { id: userId } },
-      });
-
-      if (!cliente) {
-        throw new BadRequestException(
-          'Debe completar su perfil de cliente antes de facturar',
-        );
-      }
-
-      
-      let factura = await this.facturaRepo.findOne({
+      const existente = await this.facturaRepo.findOne({
         where: { reserva: { id_reserva: reservaId } },
-        relations: ['detalles', 'cliente', 'reserva'],
+        relations: ['detalles', 'cliente', 'reserva', 'pagos'],
       });
 
-      if (factura) {
-        return factura; 
+      if (existente) return existente;
+
+      if (!reserva.cliente) {
+        throw new BadRequestException('Debe completar su perfil de cliente antes de facturar');
       }
 
-    
-      const subtotal = reserva.total;
-      const iva = subtotal * 0.15;
-      const total = subtotal + iva;
+      const clienteDelUsuario = await this.clienteRepo.findOne({
+        where: { id: reserva.cliente.id },
+        relations: ['user'],
+      });
+
+      const ownerUserId = String(clienteDelUsuario?.user?.id ?? '');
+      if (!ownerUserId) {
+        throw new BadRequestException('El perfil de cliente no está vinculado a un usuario');
+      }
+
+      if (String(ownerUserId) !== String(userId)) {
+        throw new ForbiddenException('No puede facturar una reserva que no le pertenece');
+      }
+
+      const subtotal = Number(reserva.total ?? 0);
+      if (!Number.isFinite(subtotal) || subtotal <= 0) {
+        throw new BadRequestException('La reserva no tiene un total válido para facturar');
+      }
+
+      const iva = Number((subtotal * 0.15).toFixed(2));
+      const total = Number((subtotal + iva).toFixed(2));
 
       const detalle = this.detalleRepo.create({
         descripcion: `Reserva ${reserva.id_reserva}`,
@@ -163,9 +169,9 @@ export class FacturasService {
         total: subtotal,
       });
 
-      factura = this.facturaRepo.create({
+      const factura = this.facturaRepo.create({
         reserva,
-        cliente,
+        cliente: reserva.cliente,
         subtotal,
         iva,
         total,
@@ -175,10 +181,7 @@ export class FacturasService {
 
       return await this.facturaRepo.save(factura);
     } catch (error) {
-      throw this.handleDbError(
-        error,
-        'Error al obtener o crear factura por reserva',
-      );
+      throw this.handleDbError(error, 'Error al obtener o crear factura por reserva');
     }
   }
 
@@ -204,9 +207,7 @@ export class FacturasService {
 
       if (!factura) throw new NotFoundException('Factura no encontrada');
 
-      if (dto.estado) {
-        factura.estado = dto.estado;
-      }
+      if (dto.estado) factura.estado = dto.estado;
 
       return await this.facturaRepo.save(factura);
     } catch (error) {
