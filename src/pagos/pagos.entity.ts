@@ -1,5 +1,3 @@
-import { Factura } from 'src/facturas/factura.entity';
-import { Reservas } from 'src/reservas/reservas.entity';
 import {
   Entity,
   Column,
@@ -7,8 +5,10 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { Factura } from 'src/facturas/factura.entity';
+import { Reservas } from 'src/reservas/reservas.entity';
 
-@Entity('pago')
+@Entity('pagos')
 export class Pago {
   @PrimaryGeneratedColumn('uuid')
   id_pago: string;

@@ -7,7 +7,6 @@ import {
   Put,
   Delete,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { PagosService } from './pagos.service';
 import { CreatePagosDto } from './dto/create-pagos.dto';
@@ -20,28 +19,30 @@ export class PagosController {
   constructor(private readonly pagosService: PagosService) {}
 
   @Post()
-  create(@Body() createPagosDto: CreatePagosDto, @Req() req: any) {
-    // req.user disponible si luego quieres validar dueño de la factura
-    return this.pagosService.create(createPagosDto);
+  async create(@Body() dto: CreatePagosDto) {
+    return this.pagosService.create(dto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.pagosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.pagosService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updatePagosDto: UpdatePagosDto) {
-    return this.pagosService.update(id, updatePagosDto);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdatePagosDto,
+  ) {
+    return this.pagosService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.pagosService.remove(id);
   }
 }
