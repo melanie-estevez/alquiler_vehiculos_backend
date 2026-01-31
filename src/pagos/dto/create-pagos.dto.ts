@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsOptional } from 'class-validator';
+import { IsUUID, IsString } from 'class-validator';
 
 export class CreatePagosDto {
   @IsUUID()
@@ -6,8 +6,4 @@ export class CreatePagosDto {
 
   @IsString()
   metodo: string;
-
-  @IsOptional()
-  @IsString()
-  estado?: string;
 }

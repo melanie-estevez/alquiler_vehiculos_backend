@@ -66,9 +66,9 @@ export class PagosService {
 
       const pago = this.pagosRepository.create({
         metodo,
-        estado: 'CONFIRMADO',
+        estado: 'PAGADO',              // ✅ CLAVE
         monto: Number(factura.total),
-        fecha_pago: new Date(), // ✅ FIX REAL
+        fecha_pago: new Date(),        // ✅ Date real
       });
 
       pago.factura = factura;
