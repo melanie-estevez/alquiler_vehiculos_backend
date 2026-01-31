@@ -37,7 +37,7 @@ import { Historial_usuarioModule } from './historial_usuario/historial_usuario.m
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'], 
-      synchronize: false,
+      synchronize: true,
       // ssl: { rejectUnauthorized: false }, 
     }), 
     AuthModule, 
