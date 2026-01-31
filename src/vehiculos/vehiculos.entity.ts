@@ -28,7 +28,7 @@ export class Vehiculos {
   @Column()
   placa: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('decimal', { precision: 10, scale: 2, nullable: true })
   precio_diario: number;
 
   @Column({
