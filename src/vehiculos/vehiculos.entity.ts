@@ -28,7 +28,7 @@ export class Vehiculos {
   @Column()
   placa: string;
 
-  @Column('decimal', { precision: 10, scale: 2, nullable: true })
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
   precio_diario: number;
 
   @Column({
@@ -55,4 +55,5 @@ export class Vehiculos {
   @OneToMany(() => Mantenimiento, (mantenimiento) => mantenimiento.vehiculo)
   mantenimientos: Mantenimiento[];
 }
+
 export { Vehiculos as Vehiculo };
