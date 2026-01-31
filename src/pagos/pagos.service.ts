@@ -67,8 +67,8 @@ export class PagosService {
       const pago = this.pagosRepository.create({
         metodo,
         estado: 'CONFIRMADO',
-        fecha_pago: new Date().toISOString(),
         monto: Number(factura.total),
+        fecha_pago: new Date(), // ✅ FIX REAL
       });
 
       pago.factura = factura;
@@ -80,11 +80,9 @@ export class PagosService {
         estado: EstadoFactura.PAGADO,
       });
 
-      if (factura.reserva?.id_reserva) {
-        await this.reservaRepo.update(factura.reserva.id_reserva, {
-          estado: EstadoReserva.CONFIRMADA,
-        });
-      }
+      await this.reservaRepo.update(factura.reserva.id_reserva, {
+        estado: EstadoReserva.CONFIRMADA,
+      });
 
       return pagoGuardado;
     } catch (error) {
