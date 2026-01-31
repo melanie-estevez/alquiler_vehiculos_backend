@@ -34,14 +34,16 @@ export class PagosService {
     if (error instanceof NotFoundException || error instanceof BadRequestException) {
       throw error;
     }
+    console.error(error);
     throw new InternalServerErrorException(msg);
   }
 
-  async create(createPagosDto: CreatePagosDto) {
+  async create(dto: CreatePagosDto) {
     try {
-      const id_factura = (createPagosDto as any).id_factura as string;
+      const { id_factura, metodo } = dto;
 
       if (!id_factura) throw new BadRequestException('Falta id_factura');
+      if (!metodo) throw new BadRequestException('Falta método de pago');
 
       const factura = await this.facturaRepo.findOne({
         where: { id_factura },
@@ -62,14 +64,21 @@ export class PagosService {
         throw new BadRequestException('Esta factura ya tiene un pago registrado');
       }
 
-      const pago = this.pagosRepository.create(createPagosDto);
+      const pago = this.pagosRepository.create({
+        metodo,
+        estado: 'CONFIRMADO',
+        fecha_pago: new Date().toISOString(),
+        monto: Number(factura.total),
+      });
+
       pago.factura = factura;
       pago.reserva = factura.reserva;
-      pago.monto = Number(factura.total);
 
       const pagoGuardado = await this.pagosRepository.save(pago);
 
-      await this.facturaRepo.update(id_factura, { estado: EstadoFactura.PAGADO });
+      await this.facturaRepo.update(id_factura, {
+        estado: EstadoFactura.PAGADO,
+      });
 
       if (factura.reserva?.id_reserva) {
         await this.reservaRepo.update(factura.reserva.id_reserva, {
