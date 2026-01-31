@@ -18,6 +18,6 @@ export class Sucursales {
   @Column()
   telefono: string;
 
-  @OneToMany(() => Vehiculo, vehiculo => vehiculo.sucursal)
-  vehiculos: Vehiculo[];
+  @OneToMany(() => Vehiculo, (vehiculo: any) => vehiculo.sucursal)
+  vehiculos: any[];
 }

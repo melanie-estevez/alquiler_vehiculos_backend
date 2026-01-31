@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Vehiculo } from '../vehiculos/vehiculos.entity';
+import { Vehiculos as Vehiculo } from '../vehiculos/vehiculos.entity';
 import { EstadoRevision } from './enums/estado-revision.enum';
 import { EstadoMantenimiento } from './enums/estado-mantenimiento.enum';
 
@@ -14,7 +14,7 @@ export class Mantenimiento {
   @PrimaryGeneratedColumn('uuid')
   id_mantenimiento: string;
 
-  @ManyToOne(() => Vehiculo, vehiculo => vehiculo.mantenimientos, {
+  @ManyToOne(() => Vehiculo, (vehiculo: any) => vehiculo.mantenimientos, {
     onDelete: 'CASCADE',
     eager: true,
   })
@@ -39,14 +39,14 @@ export class Mantenimiento {
     enum: EstadoMantenimiento,
     nullable: true,
   })
-  estado_mantenimiento: EstadoMantenimiento;
+  estado_mantenimiento: EstadoMantenimiento | null;
 
   @Column({ type: 'date', nullable: true })
-  fecha_mantenimiento: Date;
+  fecha_mantenimiento: Date | null;
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  costo: number;
+  costo: number | null;
 
   @Column({ type: 'text', nullable: true })
-  observaciones: string;
+  observaciones: string | null;
 }
